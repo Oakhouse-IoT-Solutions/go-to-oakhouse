@@ -182,6 +182,16 @@ func generateMiddleware(name string) error {
 
 // startDevServer starts the development server
 func startDevServer(host string, port int) error {
+	// Check if we're in a valid Go To Oakhouse project directory
+	if _, err := os.Stat("cmd/main.go"); os.IsNotExist(err) {
+		return fmt.Errorf("not in a Go To Oakhouse project directory. Please run this command from your project root directory")
+	}
+
+	// Check if cmd/app_server.go exists (indicates it's a generated project)
+	if _, err := os.Stat("cmd/app_server.go"); os.IsNotExist(err) {
+		return fmt.Errorf("this doesn't appear to be a valid Go To Oakhouse project. Missing cmd/app_server.go")
+	}
+
 	fmt.Printf("🚀 Starting Go To Oakhouse development server on %s:%d\n", host, port)
 	fmt.Println("📁 Watching for file changes...")
 
