@@ -118,7 +118,7 @@ func generateModel(name string, fields []string) error {
 // generateRepository generates a repository
 func generateRepository(name string) error {
 	filename := fmt.Sprintf("repository/%s_repo.go", strings.ToLower(name))
-	return generateFileFromTemplate(filename, repositoryTemplate, map[string]string{
+	return generateFileFromTemplate(filename, repositoryImplTemplate, map[string]string{
 		"Name": name,
 	})
 }
@@ -126,7 +126,7 @@ func generateRepository(name string) error {
 // generateService generates a service
 func generateService(name string) error {
 	filename := fmt.Sprintf("service/%s_service.go", strings.ToLower(name))
-	return generateFileFromTemplate(filename, serviceTemplate, map[string]string{
+	return generateFileFromTemplate(filename, serviceImplTemplate, map[string]string{
 		"Name": name,
 	})
 }
@@ -147,9 +147,9 @@ func generateDTO(name string) error {
 	}
 
 	dtos := map[string]string{
-		"create": createDTOTemplate,
-		"update": updateDTOTemplate,
-		"get":    getDTOTemplate,
+		"create": createDtoTemplate,
+		"update": updateDtoTemplate,
+		"get":    getDtoTemplate,
 	}
 
 	for dtoType, tmpl := range dtos {
