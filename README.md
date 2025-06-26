@@ -10,6 +10,7 @@ A powerful Go framework, designed for rapid API development with clean architect
 - 🌐 **Fiber Framework** - Built on top of Go Fiber for high performance
 - 🗄️ **GORM Integration** - Advanced ORM with scoping support
 - ✅ **Auto Validation** - Request validation with struct tags
+- 🎯 **Simplified Handlers** - Generate lightweight handlers with text responses for rapid prototyping
 - 🐳 **Docker Ready** - Production-ready containerization
 - 📚 **Comprehensive Documentation** - Detailed guides and examples
 
@@ -18,7 +19,7 @@ A powerful Go framework, designed for rapid API development with clean architect
 ### Installation
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.1.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.4.0
 ```
 
 ### Create New Project
@@ -163,13 +164,51 @@ func (h *userHandler) Create(ctx *fiber.Ctx) error {
 }
 ```
 
+### Simplified Handlers (New in v1.4.0)
+
+For rapid prototyping and testing, Go To Oakhouse now generates simplified handlers that return plain text responses without requiring database setup:
+
+```go
+type BookHandler struct{}
+
+func NewBookHandler() *BookHandler {
+	return &BookHandler{}
+}
+
+func (h *BookHandler) FindAll(c *fiber.Ctx) error {
+	return c.SendString("Book FindAll method called")
+}
+
+func (h *BookHandler) FindByID(c *fiber.Ctx) error {
+	return c.SendString("Book FindByID method called")
+}
+
+func (h *BookHandler) Create(c *fiber.Ctx) error {
+	return c.SendString("Book Create method called")
+}
+
+func (h *BookHandler) Update(c *fiber.Ctx) error {
+	return c.SendString("Book Update method called")
+}
+
+func (h *BookHandler) Delete(c *fiber.Ctx) error {
+	return c.SendString("Book Delete method called")
+}
+```
+
+These simplified handlers allow you to:
+- ✅ Start testing API endpoints immediately
+- ✅ Prototype without database setup
+- ✅ Focus on route structure and API design
+- ✅ Gradually add full implementation later
+
 ### Service Example
 
 ```go
 type UserService interface {
-    Create(ctx context.Context, req *dto.CreateUserDto) (*entity.User, error)
-    FindAll(ctx context.Context, filter *dto.GetUserDto) ([]*entity.User, int64, error)
-    FindById(ctx context.Context, id uuid.UUID) (*entity.User, error)
+    Create(ctx context.Context, req *dto.CreateUserDto) (*model.User, error)
+FindAll(ctx context.Context, filter *dto.GetUserDto) ([]*model.User, int64, error)
+FindById(ctx context.Context, id uuid.UUID) (*model.User, error)
     Update(ctx context.Context, id uuid.UUID, req *dto.UpdateUserDto) error
     Delete(ctx context.Context, id uuid.UUID) error
 }
@@ -178,8 +217,8 @@ type userService struct {
     repo repository.UserRepository
 }
 
-func (s *userService) Create(ctx context.Context, req *dto.CreateUserDto) (*entity.User, error) {
-    user := &entity.User{
+func (s *userService) Create(ctx context.Context, req *dto.CreateUserDto) (*model.User, error) {
+user := &model.User{
         Name:  req.Name,
         Email: req.Email,
         Age:   req.Age,
@@ -206,11 +245,11 @@ func FilterByAgeRange(minAge, maxAge int) func(db *gorm.DB) *gorm.DB {
 }
 
 // Usage in repository
-func (r *userRepository) FindAll(ctx context.Context, filter *dto.GetUserDto) ([]*entity.User, int64, error) {
-    var users []*entity.User
+func (r *userRepository) FindAll(ctx context.Context, filter *dto.GetUserDto) ([]*model.User, int64, error) {
+    var users []*model.User
     var total int64
     
-    query := r.db.Model(&entity.User{})
+    query := r.db.Model(&model.User{})
     
     if filter.MinAge != nil && filter.MaxAge != nil {
         query = query.Scopes(FilterByAgeRange(*filter.MinAge, *filter.MaxAge))

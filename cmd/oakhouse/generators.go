@@ -79,56 +79,85 @@ func createNewProject(projectName string) error {
 	return nil
 }
 
-// generateResource generates a complete resource
-func generateResource(name string, fields []string) error {
+// generateResource generates a complete REST resource
+func generateResource(name string, fields []string) ([]string, error) {
+	var createdFiles []string
+	
 	if err := generateModel(name, fields); err != nil {
-		return err
+		return nil, err
 	}
+	createdFiles = append(createdFiles, fmt.Sprintf("model/%s.go", strings.ToLower(name)))
+	
 	if err := generateRepository(name); err != nil {
-		return err
+		return nil, err
 	}
+	createdFiles = append(createdFiles, fmt.Sprintf("repository/%s_repo.go", strings.ToLower(name)))
+	
 	if err := generateService(name); err != nil {
-		return err
+		return nil, err
 	}
+	createdFiles = append(createdFiles, fmt.Sprintf("service/%s_service.go", strings.ToLower(name)))
+	
 	if err := generateHandler(name); err != nil {
-		return err
+		return nil, err
 	}
+	createdFiles = append(createdFiles, fmt.Sprintf("handler/%s_handler.go", strings.ToLower(name)))
+	
 	if err := generateDTO(name); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	createdFiles = append(createdFiles, fmt.Sprintf("dto/%s/create_%s_dto.go", strings.ToLower(name), strings.ToLower(name)))
+	createdFiles = append(createdFiles, fmt.Sprintf("dto/%s/update_%s_dto.go", strings.ToLower(name), strings.ToLower(name)))
+	createdFiles = append(createdFiles, fmt.Sprintf("dto/%s/get_%s_dto.go", strings.ToLower(name), strings.ToLower(name)))
+	
+	if err := generateRoute(name); err != nil {
+		return nil, err
+	}
+	createdFiles = append(createdFiles, fmt.Sprintf("route/%s.go", strings.ToLower(name)))
+	
+	return createdFiles, nil
 }
 
 // generateModel generates a model
 func generateModel(name string, fields []string) error {
-	filename := fmt.Sprintf("entity/%s.go", strings.ToLower(name))
+	filename := fmt.Sprintf("model/%s.go", strings.ToLower(name))
 	return generateFileFromTemplate(filename, modelTemplate, map[string]interface{}{
-		"Name":   name,
-		"Fields": parseFields(fields),
+		"ModelName": name,
+		"TableName": strings.ToLower(name) + "s",
+		"Fields":    parseFields(fields),
 	})
 }
 
 // generateRepository generates a repository
 func generateRepository(name string) error {
 	filename := fmt.Sprintf("repository/%s_repo.go", strings.ToLower(name))
-	return generateFileFromTemplate(filename, repositoryImplTemplate, map[string]string{
-		"Name": name,
+	return generateFileFromTemplate(filename, repositoryImplTemplate, map[string]interface{}{
+		"ProjectName": "github.com/Oakhouse-Technology/go-to-oakhouse",
+		"ModelName":   name,
+		"PackageName": strings.ToLower(name),
+		"VarName":     strings.ToLower(name),
 	})
 }
 
 // generateService generates a service
 func generateService(name string) error {
 	filename := fmt.Sprintf("service/%s_service.go", strings.ToLower(name))
-	return generateFileFromTemplate(filename, serviceImplTemplate, map[string]string{
-		"Name": name,
+	return generateFileFromTemplate(filename, serviceImplTemplate, map[string]interface{}{
+		"ProjectName": "github.com/Oakhouse-Technology/go-to-oakhouse",
+		"ModelName":   name,
+		"PackageName": strings.ToLower(name),
+		"VarName":     strings.ToLower(name),
 	})
 }
 
 // generateHandler generates a handler
 func generateHandler(name string) error {
 	filename := fmt.Sprintf("handler/%s_handler.go", strings.ToLower(name))
-	return generateFileFromTemplate(filename, handlerTemplate, map[string]string{
-		"Name": name,
+	return generateFileFromTemplate(filename, handlerTemplate, map[string]interface{}{
+		"ProjectName": "github.com/Oakhouse-Technology/go-to-oakhouse",
+		"ModelName":   name,
+		"PackageName": strings.ToLower(name),
+		"VarName":     strings.ToLower(name),
 	})
 }
 
@@ -147,9 +176,12 @@ func generateDTO(name string) error {
 
 	for dtoType, tmpl := range dtos {
 		filename := fmt.Sprintf("%s/%s_%s_dto.go", dtoDir, dtoType, strings.ToLower(name))
-		if err := generateFileFromTemplate(filename, tmpl, map[string]string{
-			"Name": name,
-			"Type": strings.Title(dtoType),
+		if err := generateFileFromTemplate(filename, tmpl, map[string]interface{}{
+			"ProjectName": "github.com/Oakhouse-Technology/go-to-oakhouse",
+			"ModelName":   name,
+			"PackageName": strings.ToLower(name),
+			"VarName":     strings.ToLower(name),
+			"Type":        strings.Title(dtoType),
 		}); err != nil {
 			return err
 		}
@@ -166,9 +198,11 @@ func generateScope(modelName, scopeName string) error {
 	}
 
 	filename := fmt.Sprintf("%s/%s.go", scopeDir, strings.ToLower(scopeName))
-	return generateFileFromTemplate(filename, scopeTemplate, map[string]string{
-		"ModelName": modelName,
-		"ScopeName": scopeName,
+	return generateFileFromTemplate(filename, scopeTemplate, map[string]interface{}{
+		"ModelName":   modelName,
+		"PackageName": strings.ToLower(modelName),
+		"ScopeName":   scopeName,
+		"FieldName":   scopeName,
 	})
 }
 
@@ -177,6 +211,39 @@ func generateMiddleware(name string) error {
 	filename := fmt.Sprintf("middleware/%s.go", strings.ToLower(name))
 	return generateFileFromTemplate(filename, middlewareTemplate, map[string]string{
 		"Name": name,
+	})
+}
+
+// getModuleName reads the module name from go.mod
+func getModuleName() (string, error) {
+	data, err := os.ReadFile("go.mod")
+	if err != nil {
+		return "", err
+	}
+	
+	lines := strings.Split(string(data), "\n")
+	for _, line := range lines {
+		if strings.HasPrefix(line, "module ") {
+			return strings.TrimSpace(strings.TrimPrefix(line, "module")), nil
+		}
+	}
+	return "", fmt.Errorf("module name not found in go.mod")
+}
+
+// generateRoute generates routes for a resource
+func generateRoute(name string) error {
+	// Get project name from go.mod
+	projectName, err := getModuleName()
+	if err != nil {
+		projectName = "your-project" // fallback
+	}
+	
+	// Generate route file
+	filename := fmt.Sprintf("route/%s.go", strings.ToLower(name))
+	return generateFileFromTemplate(filename, resourceRouteTemplate, map[string]interface{}{
+		"ProjectName": projectName,
+		"Name":        name,
+		"LowerName":   strings.ToLower(name),
 	})
 }
 
@@ -295,10 +362,16 @@ func parseFields(fields []string) []Field {
 	for _, field := range fields {
 		parts := strings.Split(field, ":")
 		if len(parts) == 2 {
+			fieldName := strings.Title(parts[0])
+			fieldType := mapGoType(parts[1])
+			lowerName := strings.ToLower(parts[0])
+			
 			result = append(result, Field{
-				Name: strings.Title(parts[0]),
-				Type: mapGoType(parts[1]),
-				Tag:  fmt.Sprintf(`json:"%s" gorm:"column:%s"`, parts[0], parts[0]),
+				Name:    fieldName,
+				Type:    fieldType,
+				Tag:     fmt.Sprintf(`json:"%s" gorm:"column:%s"`, lowerName, lowerName),
+				GormTag: fmt.Sprintf("column:%s", lowerName),
+				JsonTag: lowerName,
 			})
 		}
 	}
@@ -329,9 +402,11 @@ func mapGoType(t string) string {
 
 // Field represents a struct field
 type Field struct {
-	Name string
-	Type string
-	Tag  string
+	Name    string
+	Type    string
+	Tag     string
+	GormTag string
+	JsonTag string
 }
 
 // addDatabaseSupport adds database support to existing project

@@ -3,7 +3,7 @@ package main
 import "strings"
 
 // Model templates
-const modelTemplate = `package entity
+const modelTemplate = `package model
 
 import (
 	"time"
@@ -13,7 +13,7 @@ import (
 
 type {{.ModelName}} struct {
 	ID        uuid.UUID      ` + "`gorm:\"type:uuid;primary_key;default:gen_random_uuid()\" json:\"id\"`" + `
-{{range .Fields}}	{{.Name}} {{.Type}} ` + "`gorm:\"{{.GormTag}}\" json:\"{{.JsonTag}}\" validate:\"{{.ValidateTag}}\"`" + `
+{{range .Fields}}	{{.Name}} {{.Type}} ` + "`gorm:\"{{.GormTag}}\" json:\"{{.JsonTag}}\"`" + `
 {{end}}	CreatedAt time.Time      ` + "`gorm:\"autoCreateTime\" json:\"created_at\"`" + `
 	UpdatedAt time.Time      ` + "`gorm:\"autoUpdateTime\" json:\"updated_at\"`" + `
 	DeletedAt gorm.DeletedAt ` + "`gorm:\"index\" json:\"deleted_at,omitempty\"`" + `
@@ -29,19 +29,19 @@ const repositoryInterfaceTemplate = `package repository
 
 import (
 	"context"
-	"{{.ProjectName}}/entity"
+	"{{.ProjectName}}/model"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type {{.ModelName}}Repository interface {
-	FindAll(ctx context.Context, scopes ...func(*gorm.DB) *gorm.DB) ([]entity.{{.ModelName}}, error)
-	FindByID(ctx context.Context, id uuid.UUID, scopes ...func(*gorm.DB) *gorm.DB) (*entity.{{.ModelName}}, error)
-	Create(ctx context.Context, {{.VarName}} *entity.{{.ModelName}}) error
-	Update(ctx context.Context, {{.VarName}} *entity.{{.ModelName}}) error
+	FindAll(ctx context.Context, scopes ...func(*gorm.DB) *gorm.DB) ([]model.{{.ModelName}}, error)
+	FindByID(ctx context.Context, id uuid.UUID, scopes ...func(*gorm.DB) *gorm.DB) (*model.{{.ModelName}}, error)
+	Create(ctx context.Context, {{.VarName}} *model.{{.ModelName}}) error
+	Update(ctx context.Context, {{.VarName}} *model.{{.ModelName}}) error
 	Delete(ctx context.Context, id uuid.UUID) error
 	Count(ctx context.Context, scopes ...func(*gorm.DB) *gorm.DB) (int64, error)
-	FindWithPagination(ctx context.Context, offset, limit int, scopes ...func(*gorm.DB) *gorm.DB) ([]entity.{{.ModelName}}, int64, error)
+	FindWithPagination(ctx context.Context, offset, limit int, scopes ...func(*gorm.DB) *gorm.DB) ([]model.{{.ModelName}}, int64, error)
 }
 `
 
@@ -50,7 +50,7 @@ const repositoryImplTemplate = `package repository
 import (
 	"context"
 	"{{.ProjectName}}/adapter"
-	"{{.ProjectName}}/entity"
+	"{{.ProjectName}}/model"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -63,8 +63,8 @@ func New{{.ModelName}}Repository(db *adapter.DatabaseAdapter) {{.ModelName}}Repo
 	return &{{.VarName}}Repository{db: db}
 }
 
-func (r *{{.VarName}}Repository) FindAll(ctx context.Context, scopes ...func(*gorm.DB) *gorm.DB) ([]entity.{{.ModelName}}, error) {
-	var {{.VarName}}s []entity.{{.ModelName}}
+func (r *{{.VarName}}Repository) FindAll(ctx context.Context, scopes ...func(*gorm.DB) *gorm.DB) ([]model.{{.ModelName}}, error) {
+	var {{.VarName}}s []model.{{.ModelName}}
 	query := r.db.DB.WithContext(ctx)
 	
 	for _, scope := range scopes {
@@ -75,8 +75,8 @@ func (r *{{.VarName}}Repository) FindAll(ctx context.Context, scopes ...func(*go
 	return {{.VarName}}s, err
 }
 
-func (r *{{.VarName}}Repository) FindByID(ctx context.Context, id uuid.UUID, scopes ...func(*gorm.DB) *gorm.DB) (*entity.{{.ModelName}}, error) {
-	var {{.VarName}} entity.{{.ModelName}}
+func (r *{{.VarName}}Repository) FindByID(ctx context.Context, id uuid.UUID, scopes ...func(*gorm.DB) *gorm.DB) (*model.{{.ModelName}}, error) {
+	var {{.VarName}} model.{{.ModelName}}
 	query := r.db.DB.WithContext(ctx)
 	
 	for _, scope := range scopes {
@@ -90,21 +90,21 @@ func (r *{{.VarName}}Repository) FindByID(ctx context.Context, id uuid.UUID, sco
 	return &{{.VarName}}, nil
 }
 
-func (r *{{.VarName}}Repository) Create(ctx context.Context, {{.VarName}} *entity.{{.ModelName}}) error {
+func (r *{{.VarName}}Repository) Create(ctx context.Context, {{.VarName}} *model.{{.ModelName}}) error {
 	return r.db.DB.WithContext(ctx).Create({{.VarName}}).Error
 }
 
-func (r *{{.VarName}}Repository) Update(ctx context.Context, {{.VarName}} *entity.{{.ModelName}}) error {
+func (r *{{.VarName}}Repository) Update(ctx context.Context, {{.VarName}} *model.{{.ModelName}}) error {
 	return r.db.DB.WithContext(ctx).Save({{.VarName}}).Error
 }
 
 func (r *{{.VarName}}Repository) Delete(ctx context.Context, id uuid.UUID) error {
-	return r.db.DB.WithContext(ctx).Delete(&entity.{{.ModelName}}{}, "id = ?", id).Error
+	return r.db.DB.WithContext(ctx).Delete(&model.{{.ModelName}}{}, "id = ?", id).Error
 }
 
 func (r *{{.VarName}}Repository) Count(ctx context.Context, scopes ...func(*gorm.DB) *gorm.DB) (int64, error) {
 	var count int64
-	query := r.db.DB.WithContext(ctx).Model(&entity.{{.ModelName}}{})
+	query := r.db.DB.WithContext(ctx).Model(&model.{{.ModelName}}{})
 	
 	for _, scope := range scopes {
 		query = scope(query)
@@ -114,12 +114,12 @@ func (r *{{.VarName}}Repository) Count(ctx context.Context, scopes ...func(*gorm
 	return count, err
 }
 
-func (r *{{.VarName}}Repository) FindWithPagination(ctx context.Context, offset, limit int, scopes ...func(*gorm.DB) *gorm.DB) ([]entity.{{.ModelName}}, int64, error) {
-	var {{.VarName}}s []entity.{{.ModelName}}
+func (r *{{.VarName}}Repository) FindWithPagination(ctx context.Context, offset, limit int, scopes ...func(*gorm.DB) *gorm.DB) ([]model.{{.ModelName}}, int64, error) {
+	var {{.VarName}}s []model.{{.ModelName}}
 	var total int64
 	
 	// Count total records
-	countQuery := r.db.DB.WithContext(ctx).Model(&entity.{{.ModelName}}{})
+	countQuery := r.db.DB.WithContext(ctx).Model(&model.{{.ModelName}}{})
 	for _, scope := range scopes {
 		countQuery = scope(countQuery)
 	}
@@ -144,17 +144,17 @@ const serviceInterfaceTemplate = `package service
 import (
 	"context"
 	"{{.ProjectName}}/dto/{{.PackageName}}"
-	"{{.ProjectName}}/entity"
+	"{{.ProjectName}}/model"
 	"github.com/google/uuid"
 )
 
 type {{.ModelName}}Service interface {
-	FindAll(ctx context.Context, dto *{{.PackageName}}.Get{{.ModelName}}Dto) ([]entity.{{.ModelName}}, error)
-	FindByID(ctx context.Context, id uuid.UUID) (*entity.{{.ModelName}}, error)
-	Create(ctx context.Context, dto *{{.PackageName}}.Create{{.ModelName}}Dto) (*entity.{{.ModelName}}, error)
-	Update(ctx context.Context, id uuid.UUID, dto *{{.PackageName}}.Update{{.ModelName}}Dto) (*entity.{{.ModelName}}, error)
+	FindAll(ctx context.Context, dto *{{.PackageName}}.Get{{.ModelName}}Dto) ([]model.{{.ModelName}}, error)
+	FindByID(ctx context.Context, id uuid.UUID) (*model.{{.ModelName}}, error)
+	Create(ctx context.Context, dto *{{.PackageName}}.Create{{.ModelName}}Dto) (*model.{{.ModelName}}, error)
+	Update(ctx context.Context, id uuid.UUID, dto *{{.PackageName}}.Update{{.ModelName}}Dto) (*model.{{.ModelName}}, error)
 	Delete(ctx context.Context, id uuid.UUID) error
-	FindWithPagination(ctx context.Context, dto *{{.PackageName}}.Get{{.ModelName}}Dto) ([]entity.{{.ModelName}}, int64, error)
+	FindWithPagination(ctx context.Context, dto *{{.PackageName}}.Get{{.ModelName}}Dto) ([]model.{{.ModelName}}, int64, error)
 }
 `
 
@@ -163,7 +163,7 @@ const serviceImplTemplate = `package service
 import (
 	"context"
 	"{{.ProjectName}}/dto/{{.PackageName}}"
-	"{{.ProjectName}}/entity"
+	"{{.ProjectName}}/model"
 	"{{.ProjectName}}/repository"
 	"{{.ProjectName}}/scope/{{.PackageName}}"
 	"{{.ProjectName}}/util"
@@ -179,17 +179,17 @@ func New{{.ModelName}}Service(repo repository.{{.ModelName}}Repository) {{.Model
 	return &{{.VarName}}Service{repo: repo}
 }
 
-func (s *{{.VarName}}Service) FindAll(ctx context.Context, dto *{{.PackageName}}.Get{{.ModelName}}Dto) ([]entity.{{.ModelName}}, error) {
+func (s *{{.VarName}}Service) FindAll(ctx context.Context, dto *{{.PackageName}}.Get{{.ModelName}}Dto) ([]model.{{.ModelName}}, error) {
 	scopes := s.buildScopes(dto)
 	return s.repo.FindAll(ctx, scopes...)
 }
 
-func (s *{{.VarName}}Service) FindByID(ctx context.Context, id uuid.UUID) (*entity.{{.ModelName}}, error) {
+func (s *{{.VarName}}Service) FindByID(ctx context.Context, id uuid.UUID) (*model.{{.ModelName}}, error) {
 	return s.repo.FindByID(ctx, id)
 }
 
-func (s *{{.VarName}}Service) Create(ctx context.Context, dto *{{.PackageName}}.Create{{.ModelName}}Dto) (*entity.{{.ModelName}}, error) {
-	{{.VarName}} := &entity.{{.ModelName}}{
+func (s *{{.VarName}}Service) Create(ctx context.Context, dto *{{.PackageName}}.Create{{.ModelName}}Dto) (*model.{{.ModelName}}, error) {
+	{{.VarName}} := &model.{{.ModelName}}{
 {{range .Fields}}		{{.Name}}: dto.{{.Name}},
 {{end}}	}
 	
@@ -200,7 +200,7 @@ func (s *{{.VarName}}Service) Create(ctx context.Context, dto *{{.PackageName}}.
 	return {{.VarName}}, nil
 }
 
-func (s *{{.VarName}}Service) Update(ctx context.Context, id uuid.UUID, dto *{{.PackageName}}.Update{{.ModelName}}Dto) (*entity.{{.ModelName}}, error) {
+func (s *{{.VarName}}Service) Update(ctx context.Context, id uuid.UUID, dto *{{.PackageName}}.Update{{.ModelName}}Dto) (*model.{{.ModelName}}, error) {
 	{{.VarName}}, err := s.repo.FindByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -221,7 +221,7 @@ func (s *{{.VarName}}Service) Delete(ctx context.Context, id uuid.UUID) error {
 	return s.repo.Delete(ctx, id)
 }
 
-func (s *{{.VarName}}Service) FindWithPagination(ctx context.Context, dto *{{.PackageName}}.Get{{.ModelName}}Dto) ([]entity.{{.ModelName}}, int64, error) {
+func (s *{{.VarName}}Service) FindWithPagination(ctx context.Context, dto *{{.PackageName}}.Get{{.ModelName}}Dto) ([]model.{{.ModelName}}, int64, error) {
 	scopes := s.buildScopes(dto)
 	offset := (dto.Page - 1) * dto.PageSize
 	return s.repo.FindWithPagination(ctx, offset, dto.PageSize, scopes...)
@@ -244,116 +244,37 @@ func (s *{{.VarName}}Service) buildScopes(dto *{{.PackageName}}.Get{{.ModelName}
 const handlerTemplate = `package handler
 
 import (
-	"{{.ProjectName}}/dto/{{.PackageName}}"
-	"{{.ProjectName}}/service"
-	"{{.ProjectName}}/util"
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
 )
 
 type {{.ModelName}}Handler struct {
-	service   service.{{.ModelName}}Service
-	validator *validator.Validate
 }
 
-func New{{.ModelName}}Handler(service service.{{.ModelName}}Service) *{{.ModelName}}Handler {
-	return &{{.ModelName}}Handler{
-		service:   service,
-		validator: validator.New(),
-	}
+func New{{.ModelName}}Handler() *{{.ModelName}}Handler {
+	return &{{.ModelName}}Handler{}
 }
 
 func (h *{{.ModelName}}Handler) FindAll(c *fiber.Ctx) error {
-	var dto {{.PackageName}}.Get{{.ModelName}}Dto
-	if err := c.QueryParser(&dto); err != nil {
-		return util.SendError(c, fiber.StatusBadRequest, "Invalid query parameters", err.Error())
-	}
-	
-	dto.SetDefaults()
-	
-	if err := h.validator.Struct(&dto); err != nil {
-		return util.SendError(c, fiber.StatusBadRequest, "Validation failed", err.Error())
-	}
-	
-	{{.VarName}}s, total, err := h.service.FindWithPagination(c.Context(), &dto)
-	if err != nil {
-		return util.SendError(c, fiber.StatusInternalServerError, "Failed to fetch {{.VarName}}s", err.Error())
-	}
-	
-	pagination := util.CalculatePagination(dto.Page, dto.PageSize, total)
-	return util.SendPaginatedSuccess(c, "{{.ModelName}}s retrieved successfully", {{.VarName}}s, pagination)
+	return c.SendString("All {{.ModelName}}s retrieved successfully")
 }
 
 func (h *{{.ModelName}}Handler) FindByID(c *fiber.Ctx) error {
 	idStr := c.Params("id")
-	id, err := uuid.Parse(idStr)
-	if err != nil {
-		return util.SendError(c, fiber.StatusBadRequest, "Invalid ID format", err.Error())
-	}
-	
-	{{.VarName}}, err := h.service.FindByID(c.Context(), id)
-	if err != nil {
-		return util.SendError(c, fiber.StatusNotFound, "{{.ModelName}} not found", err.Error())
-	}
-	
-	return util.SendSuccess(c, "{{.ModelName}} retrieved successfully", {{.VarName}})
+	return c.SendString("{{.ModelName}} with ID " + idStr + " retrieved successfully")
 }
 
 func (h *{{.ModelName}}Handler) Create(c *fiber.Ctx) error {
-	var dto {{.PackageName}}.Create{{.ModelName}}Dto
-	if err := c.BodyParser(&dto); err != nil {
-		return util.SendError(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
-	}
-	
-	if err := h.validator.Struct(&dto); err != nil {
-		return util.SendError(c, fiber.StatusBadRequest, "Validation failed", err.Error())
-	}
-	
-	{{.VarName}}, err := h.service.Create(c.Context(), &dto)
-	if err != nil {
-		return util.SendError(c, fiber.StatusInternalServerError, "Failed to create {{.VarName}}", err.Error())
-	}
-	
-	return util.SendSuccess(c, "{{.ModelName}} created successfully", {{.VarName}})
+	return c.SendString("{{.ModelName}} created successfully")
 }
 
 func (h *{{.ModelName}}Handler) Update(c *fiber.Ctx) error {
 	idStr := c.Params("id")
-	id, err := uuid.Parse(idStr)
-	if err != nil {
-		return util.SendError(c, fiber.StatusBadRequest, "Invalid ID format", err.Error())
-	}
-	
-	var dto {{.PackageName}}.Update{{.ModelName}}Dto
-	if err := c.BodyParser(&dto); err != nil {
-		return util.SendError(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
-	}
-	
-	if err := h.validator.Struct(&dto); err != nil {
-		return util.SendError(c, fiber.StatusBadRequest, "Validation failed", err.Error())
-	}
-	
-	{{.VarName}}, err := h.service.Update(c.Context(), id, &dto)
-	if err != nil {
-		return util.SendError(c, fiber.StatusInternalServerError, "Failed to update {{.VarName}}", err.Error())
-	}
-	
-	return util.SendSuccess(c, "{{.ModelName}} updated successfully", {{.VarName}})
+	return c.SendString("{{.ModelName}} with ID " + idStr + " updated successfully")
 }
 
 func (h *{{.ModelName}}Handler) Delete(c *fiber.Ctx) error {
 	idStr := c.Params("id")
-	id, err := uuid.Parse(idStr)
-	if err != nil {
-		return util.SendError(c, fiber.StatusBadRequest, "Invalid ID format", err.Error())
-	}
-	
-	if err := h.service.Delete(c.Context(), id); err != nil {
-		return util.SendError(c, fiber.StatusInternalServerError, "Failed to delete {{.VarName}}", err.Error())
-	}
-	
-	return util.SendSuccess(c, "{{.ModelName}} deleted successfully", nil)
+	return c.SendString("{{.ModelName}} with ID " + idStr + " deleted successfully")
 }
 `
 
@@ -390,7 +311,7 @@ func (dto *Get{{.ModelName}}Dto) SetDefaults() {
 const createDtoTemplate = `package {{.PackageName}}
 
 type Create{{.ModelName}}Dto struct {
-{{range .Fields}}	{{.Name}} {{.Type}} ` + "`json:\"{{.JsonTag}}\" validate:\"{{.ValidateTag}}\"`" + `
+{{range .Fields}}	{{.Name}} {{.Type}} ` + "`json:\"{{.JsonTag}}\"`" + `
 {{end}}
 }
 `
@@ -457,6 +378,29 @@ func {{.MiddlewareName}}() fiber.Handler {
 		
 		return c.Next()
 	}
+}
+`
+
+// Resource route template
+const resourceRouteTemplate = `package route
+
+import (
+	"{{.ProjectName}}/handler"
+	"github.com/gofiber/fiber/v2"
+)
+
+// Setup{{.Name}}Routes sets up routes for {{.Name}} resource
+func Setup{{.Name}}Routes(api fiber.Router) {
+	// Initialize handler
+	{{.LowerName}}Handler := handler.New{{.Name}}Handler()
+
+	// Setup routes
+	{{.LowerName}}Group := api.Group("/{{.LowerName}}s")
+	{{.LowerName}}Group.Get("/", {{.LowerName}}Handler.FindAll)
+	{{.LowerName}}Group.Get("/:id", {{.LowerName}}Handler.FindByID)
+	{{.LowerName}}Group.Post("/", {{.LowerName}}Handler.Create)
+	{{.LowerName}}Group.Put("/:id", {{.LowerName}}Handler.Update)
+	{{.LowerName}}Group.Delete("/:id", {{.LowerName}}Handler.Delete)
 }
 `
 

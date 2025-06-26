@@ -270,6 +270,17 @@ func (s *AppServer) setupMiddleware() {
 }
 
 func (s *AppServer) setupRoutes() {
+	// Home page
+	s.app.Get("/", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"message": "Welcome to Go To Oakhouse API",
+			"framework": "Go To Oakhouse",
+			"author": "Created by Htet Waiyan From Oakhouse",
+			"status": "running",
+			"time": time.Now(),
+		})
+	})
+
 	// Health check
 	s.app.Get("/health", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
@@ -497,8 +508,8 @@ func NewDatabaseAdapter(cfg *config.Config) (*DatabaseAdapter, error) {
 func autoMigrate(db *gorm.DB) error {
 	// Add your models here for auto-migration
 	// return db.AutoMigrate(
-	//     &entity.User{},
-	//     &entity.Product{},
+	//     &model.User{},
+//     &model.Product{},
 	// )
 	return nil
 }

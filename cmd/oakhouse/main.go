@@ -8,14 +8,16 @@ import (
 )
 
 var (
-	version = "1.1.0"
+	version = "1.4.0"
 )
 
 func main() {
 	rootCmd := &cobra.Command{
 		Use:     "oakhouse",
 		Short:   "Go To Oakhouse - A powerful Go framework for rapid API development",
-		Long:    `Go To Oakhouse is a Go framework for building APIs with clean architecture patterns.`,
+		Long:    `Go To Oakhouse is a Go framework for building APIs with clean architecture patterns.
+
+Created by Htet Waiyan From Oakhouse`,
 		Version: version,
 	}
 
@@ -72,6 +74,7 @@ func generateCmd() *cobra.Command {
 	cmd.AddCommand(generateDTOCmd())
 	cmd.AddCommand(generateScopeCmd())
 	cmd.AddCommand(generateMiddlewareCmd())
+	cmd.AddCommand(generateRouteCmd())
 
 	return cmd
 }
@@ -117,11 +120,16 @@ func generateResourceCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			resourceName := args[0]
 			fields := args[1:]
-			if err := generateResource(resourceName, fields); err != nil {
+			createdFiles, err := generateResource(resourceName, fields)
+			if err != nil {
 				fmt.Fprintf(os.Stderr, "Error generating resource: %v\n", err)
 				os.Exit(1)
 			}
 			fmt.Printf("✅ Resource '%s' generated successfully!\n", resourceName)
+			fmt.Println("\n📁 Created files:")
+			for _, file := range createdFiles {
+				fmt.Printf("   %s\n", file)
+			}
 		},
 	}
 	return cmd
@@ -251,6 +259,24 @@ func generateMiddlewareCmd() *cobra.Command {
 				os.Exit(1)
 			}
 			fmt.Printf("✅ Middleware '%s' generated successfully!\n", middlewareName)
+		},
+	}
+	return cmd
+}
+
+// generateRouteCmd generates routes for a resource
+func generateRouteCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "route [name]",
+		Short: "Generate routes for a resource",
+		Args:  cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			routeName := args[0]
+			if err := generateRoute(routeName); err != nil {
+				fmt.Fprintf(os.Stderr, "Error generating route: %v\n", err)
+				os.Exit(1)
+			}
+			fmt.Printf("✅ Routes for '%s' generated successfully!\n", routeName)
 		},
 	}
 	return cmd
