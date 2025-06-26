@@ -18,7 +18,7 @@ A powerful Go framework, designed for rapid API development with clean architect
 ### Installation
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v0.0.1
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.1.0
 ```
 
 ### Create New Project
@@ -44,8 +44,33 @@ oakhouse generate repository ProductRepository
 ### Start Development Server
 
 ```bash
+# Server starts without database by default
 oakhouse serve
+
+# Add database support when needed
+oakhouse add database
 ```
+
+### Database Support
+
+By default, new projects are generated **without database dependencies** and can run immediately. When you're ready to add database support:
+
+```bash
+# Add database support to existing project
+oakhouse add database
+
+# Set up your database environment variables
+cp .env.example .env
+# Edit .env with your database credentials
+
+# Run migrations
+oakhouse migrate up
+```
+
+This approach allows you to:
+- ✅ Start developing immediately without PostgreSQL setup
+- ✅ Add database support only when needed
+- ✅ Keep projects lightweight for simple APIs
 
 ## Project Structure
 

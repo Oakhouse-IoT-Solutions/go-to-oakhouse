@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	version = "1.0.0"
+	version = "1.1.0"
 )
 
 func main() {
@@ -22,6 +22,7 @@ func main() {
 	// Add subcommands
 	rootCmd.AddCommand(newCmd())
 	rootCmd.AddCommand(generateCmd())
+	rootCmd.AddCommand(addCmd())
 	rootCmd.AddCommand(serveCmd())
 	rootCmd.AddCommand(migrateCmd())
 	rootCmd.AddCommand(buildCmd())
@@ -72,6 +73,38 @@ func generateCmd() *cobra.Command {
 	cmd.AddCommand(generateScopeCmd())
 	cmd.AddCommand(generateMiddlewareCmd())
 
+	return cmd
+}
+
+// addCmd handles adding features to existing projects
+func addCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "add",
+		Short: "Add features to existing project",
+	}
+
+	// Add subcommands
+	cmd.AddCommand(addDatabaseCmd())
+
+	return cmd
+}
+
+// addDatabaseCmd adds database support to existing project
+func addDatabaseCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "database",
+		Short: "Add database support to existing project",
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := addDatabaseSupport(); err != nil {
+				fmt.Fprintf(os.Stderr, "Error adding database support: %v\n", err)
+				os.Exit(1)
+			}
+			fmt.Println("✅ Database support added successfully!")
+			fmt.Println("💡 Don't forget to:")
+			fmt.Println("   1. Set database environment variables in .env")
+			fmt.Println("   2. Run 'oakhouse migrate up' to create tables")
+		},
+	}
 	return cmd
 }
 

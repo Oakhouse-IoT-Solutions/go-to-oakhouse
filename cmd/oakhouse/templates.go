@@ -184,15 +184,13 @@ const appServerTemplate = `package main
 
 import (
 	"context"
-	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"{{.ProjectName}}/config"
 	"{{.ProjectName}}/adapter"
 	"{{.ProjectName}}/route"
-	"{{.ProjectName}}/middleware"
+	// "{{.ProjectName}}/middleware"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -216,11 +214,16 @@ func (s *AppServer) Init() *AppServer {
 	// Load configuration
 	s.config = config.Load()
 
-	// Initialize database
+	// Initialize database (optional - server can run without it)
 	var err error
 	s.db, err = adapter.NewDatabaseAdapter(s.config)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Printf("⚠️  Database connection failed: %v", err)
+		log.Println("💡 To connect to PostgreSQL, set these environment variables:")
+		log.Println("   DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME")
+		log.Println("   Or use: oakhouse add database")
+		log.Println("🚀 Server will continue without database connection")
+		s.db = nil
 	}
 
 	// Initialize Fiber app
@@ -262,8 +265,8 @@ func (s *AppServer) setupMiddleware() {
 		AllowHeaders: s.config.CorsAllowedHeaders,
 	}))
 
-	// Rate limiting middleware
-	s.app.Use(middleware.RateLimit(s.config))
+	// Rate limiting middleware (uncomment when middleware package is available)
+	// s.app.Use(middleware.RateLimit(s.config))
 }
 
 func (s *AppServer) setupRoutes() {
@@ -416,10 +419,10 @@ const routeTemplate = `package route
 
 import (
 	"{{.ProjectName}}/adapter"
-	"{{.ProjectName}}/handler"
-	"{{.ProjectName}}/repository"
-	"{{.ProjectName}}/service"
-	"{{.ProjectName}}/middleware"
+	// "{{.ProjectName}}/handler"
+	// "{{.ProjectName}}/repository"
+	// "{{.ProjectName}}/service"
+	// "{{.ProjectName}}/middleware"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -427,22 +430,30 @@ import (
 func SetupV1Routes(api fiber.Router, db *adapter.DatabaseAdapter) {
 	v1 := api.Group("/v1")
 
-	// Initialize repositories
+	// Health check endpoint
+	v1.Get("/health", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"status": "ok",
+			"message": "Server is running",
+		})
+	})
+
+	// Initialize repositories (uncomment when needed)
 	// userRepo := repository.NewUserRepository(db)
 
-	// Initialize services
+	// Initialize services (uncomment when needed)
 	// userService := service.NewUserService(userRepo)
 
-	// Initialize handlers
+	// Initialize handlers (uncomment when needed)
 	// userHandler := handler.NewUserHandler(userService)
 
-	// Public routes
-	public := v1.Group("/")
+	// Public routes (uncomment when needed)
+	// public := v1.Group("/")
 	// public.Post("/auth/login", authHandler.Login)
 	// public.Post("/auth/register", authHandler.Register)
 
-	// Protected routes
-	protected := v1.Group("/", middleware.AuthRequired())
+	// Protected routes (uncomment when needed)
+	// protected := v1.Group("/", middleware.AuthRequired())
 	// protected.Get("/users", userHandler.FindAll)
 	// protected.Get("/users/:id", userHandler.FindById)
 	// protected.Post("/users", userHandler.Create)
