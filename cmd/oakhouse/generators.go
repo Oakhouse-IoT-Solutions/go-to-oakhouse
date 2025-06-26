@@ -69,15 +69,8 @@ func createNewProject(projectName string) error {
 		}
 	}
 
-	// Initialize go module
-	cmd := exec.Command("go", "mod", "init", projectName)
-	cmd.Dir = projectName
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("failed to initialize go module: %w", err)
-	}
-
 	// Download dependencies
-	cmd = exec.Command("go", "mod", "tidy")
+	cmd := exec.Command("go", "mod", "tidy")
 	cmd.Dir = projectName
 	if err := cmd.Run(); err != nil {
 		return fmt.Errorf("failed to download dependencies: %w", err)
