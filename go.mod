@@ -1,4 +1,4 @@
-module github.com/go-to-oakhouse/cli
+module github.com/Oakhouse-Technology/go-to-oakhouse
 
 go 1.21
 
