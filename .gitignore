@@ -1,0 +1,45 @@
+# Test projects created during development
+debug-project/
+final-test-project/
+fresh-test-project/
+test-v1.1.0/
+test-api-project/
+working-test-project/
+
+# Executable files for different versions
+oakhouse.exe
+oakhouse-*.exe
+
+# Go build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
