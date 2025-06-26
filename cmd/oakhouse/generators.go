@@ -33,6 +33,7 @@ func createNewProject(projectName string) error {
 		"middleware",
 		"entity",
 		"migrations",
+		"static",
 	}
 
 	for _, dir := range dirs {
@@ -57,6 +58,7 @@ func createNewProject(projectName string) error {
 		"util/pagination.go":       paginationUtilTemplate,
 		"scope/base_scope.go":      baseScopeTemplate,
 		"middleware/auth.go":       authMiddlewareTemplate,
+		"static/index.html":        indexHtmlTemplate,
 		"Makefile":                 makefileTemplate,
 	}
 
@@ -240,11 +242,94 @@ func generateRoute(name string) error {
 	
 	// Generate route file
 	filename := fmt.Sprintf("route/%s.go", strings.ToLower(name))
-	return generateFileFromTemplate(filename, resourceRouteTemplate, map[string]interface{}{
+	if err := generateFileFromTemplate(filename, resourceRouteTemplate, map[string]interface{}{
 		"ProjectName": projectName,
 		"Name":        name,
 		"LowerName":   strings.ToLower(name),
-	})
+	}); err != nil {
+		return err
+	}
+	
+	// Update v1.go to register the new routes
+	return updateV1Routes(name)
+}
+
+// updateV1Routes adds the new resource route to v1.go
+func updateV1Routes(resourceName string) error {
+	v1FilePath := "route/v1.go"
+	
+	// Check if v1.go exists
+	if _, err := os.Stat(v1FilePath); os.IsNotExist(err) {
+		return fmt.Errorf("v1.go file not found at %s", v1FilePath)
+	}
+	
+	// Read the current v1.go file
+	content, err := os.ReadFile(v1FilePath)
+	if err != nil {
+		return fmt.Errorf("failed to read v1.go: %v", err)
+	}
+	
+	contentStr := string(content)
+	setupCall := fmt.Sprintf("Setup%sRoutes(v1)", resourceName)
+	
+	// Check if the route is already registered
+	if strings.Contains(contentStr, setupCall) {
+		return nil // Already registered
+	}
+	
+	// Find the insertion point after the "// Setup resource routes" comment
+	commentPattern := "// Setup resource routes"
+	commentIndex := strings.Index(contentStr, commentPattern)
+	if commentIndex == -1 {
+		// If comment doesn't exist, add it before "// Initialize repositories"
+		repoComment := "// Initialize repositories"
+		repoIndex := strings.Index(contentStr, repoComment)
+		if repoIndex == -1 {
+			return fmt.Errorf("could not find insertion point in v1.go")
+		}
+		
+		// Insert the comment and route call before the repositories comment
+		newContent := contentStr[:repoIndex] + "\t" + commentPattern + "\n\t" + setupCall + "\n\n\t" + contentStr[repoIndex:]
+		return os.WriteFile(v1FilePath, []byte(newContent), 0644)
+	}
+	
+	// Find the end of the route setup section
+	lines := strings.Split(contentStr, "\n")
+	commentLineIndex := -1
+	lastRouteLineIndex := -1
+	
+	// Find the comment line
+	for i, line := range lines {
+		if strings.Contains(line, commentPattern) {
+			commentLineIndex = i
+			break
+		}
+	}
+	
+	// Find the last route setup line after the comment
+	if commentLineIndex != -1 {
+		for i := commentLineIndex + 1; i < len(lines); i++ {
+			if strings.Contains(lines[i], "Setup") && strings.Contains(lines[i], "Routes(v1)") {
+				lastRouteLineIndex = i
+			} else if strings.TrimSpace(lines[i]) != "" && !strings.Contains(lines[i], "Setup") {
+				// We've reached a non-route line
+				break
+			}
+		}
+	}
+	
+	// Insert the new route call after the last route setup line
+	if lastRouteLineIndex != -1 {
+		// Insert after the last route line
+		lines = append(lines[:lastRouteLineIndex+1], append([]string{"\t" + setupCall}, lines[lastRouteLineIndex+1:]...)...)
+	} else {
+		// Insert after the comment line
+		lines = append(lines[:commentLineIndex+1], append([]string{"\t" + setupCall}, lines[commentLineIndex+1:]...)...)
+	}
+	
+	// Write the updated content back to the file
+	updatedContent := strings.Join(lines, "\n")
+	return os.WriteFile(v1FilePath, []byte(updatedContent), 0644)
 }
 
 // startDevServer starts the development server
