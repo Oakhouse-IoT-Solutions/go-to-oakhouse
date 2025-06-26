@@ -32,7 +32,7 @@
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.3.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.7.0
 ```
 
 ### Verify Installation

@@ -19,7 +19,7 @@ A powerful Go framework, designed for rapid API development with clean architect
 ### Installation
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.5.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.7.0
 ```
 
 ### Create New Project

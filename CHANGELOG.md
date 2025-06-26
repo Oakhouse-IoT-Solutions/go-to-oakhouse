@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2024-12-19
+
+### Changed
+- Updated CLI version to 1.7.0
+- Enhanced documentation and version consistency
+
+### Improved
+- Better version management across all documentation files
+- Streamlined release process
+
+## [1.6.0] - 2024-12-19
+
+### Added
+- **Static File Serving**: Enhanced project templates with static file serving capabilities
+  - Automatic static file server setup in generated projects
+  - Built-in `index.html` template with modern design
+  - Seamless integration with Fiber's static middleware
+- **Enhanced Project Templates**: Improved project scaffolding
+  - Projects now include a `static` directory with `index.html`
+  - Updated `app_server.go` template to serve static files
+  - Better default project structure for web applications
+
+### Changed
+- Updated CLI version to 1.6.0
+- Enhanced project generation with static file support
+- Improved route templates for better static content handling
+
+### Fixed
+- Resolved route generation issues in project templates
+- Fixed static file serving configuration in generated projects
+- Improved template consistency across generated files
+
 ## [1.5.0] - 2024-12-19
 
 ### Added
