@@ -14,7 +14,6 @@ demo-*/
 sample-*/
 example-project/
 temp-project/
-testproject/
 
 # Executable files for different versions
 oakhouse.exe
@@ -35,6 +34,13 @@ model/
 repository/
 route/
 service/
+dto/
+examples/
+
+# Debug and development directories
+debug/
+debug-*/
+*-debug/
 
 # Testing files for handlers and models
 *_test.go
