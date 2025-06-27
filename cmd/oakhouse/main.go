@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	version = "1.10.0"
+	version = "1.11.0"
 )
 
 func main() {
@@ -104,7 +104,6 @@ func addDatabaseCmd() *cobra.Command {
 			fmt.Println("✅ Database support added successfully!")
 			fmt.Println("💡 Don't forget to:")
 			fmt.Println("   1. Set database environment variables in .env")
-			fmt.Println("   2. Run 'oakhouse db-setup' to connect database modules")
 		},
 	}
 	return cmd
