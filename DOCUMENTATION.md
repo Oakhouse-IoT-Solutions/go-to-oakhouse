@@ -29,10 +29,17 @@
 - PostgreSQL (recommended) or MySQL
 - Redis (optional, for caching)
 
+### What's New in v1.9.0
+
+- **Simplified Database Management**: Replaced complex migration system with a single `db-setup` command
+- **Streamlined Workflow**: No more migration files to manage - just run `oakhouse db-setup` to initialize your database
+- **Improved CLI Stability**: Fixed compilation issues and dependency conflicts
+- **Cleaner Architecture**: Removed migration complexity for a more straightforward development experience
+
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.8.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.9.0
 ```
 
 ### Verify Installation
@@ -172,7 +179,7 @@ oakhouse generate middleware RoleCheck
 ### Database Operations
 
 ```bash
-# Initialize database
+# Initialize database and set up tables
 oakhouse db-setup
 ```
 
