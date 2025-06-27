@@ -190,7 +190,7 @@ const indexHtmlTemplate = `<!DOCTYPE html>
     <div class="container">
         <div class="hero">
             <h1>🏠 {{.ProjectName}}</h1>
-            <div class="version-badge">Go To Oakhouse v1.19.0</div>
+            <div class="version-badge">Go To Oakhouse v1.20.0</div>
             <p>Your new Go To Oakhouse project is ready!</p>
         </div>
         

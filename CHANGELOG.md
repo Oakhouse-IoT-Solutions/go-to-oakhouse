@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.0] - 2024-12-20
+
+### Added
+- **Enhanced Wire Integration**: Improved dependency injection with comprehensive documentation
+- **CLI Template Improvements**: Fixed import issues in generated templates
+- **Documentation Updates**: Comprehensive updates to all documentation files
+- **New Release Structure**: Reorganized release directory structure for better maintainability
+
+### Changed
+- **Version Update**: Updated to version 1.20.0 across all files and documentation
+- **Project Structure**: Enhanced project organization with improved release management
+- **Template Generation**: Improved template generation with proper imports
+
+### Fixed
+- **Import Issues**: Resolved missing imports in CLI-generated projects
+- **Template Generation**: Fixed CLI template generation to include all necessary imports
+
+### Improved
+- **Developer Experience**: Better code clarity and onboarding through comprehensive documentation
+- **Code Maintainability**: Enhanced code structure with detailed dependency injection patterns
+- **Release Process**: Streamlined release process with better organization
+
 ## [1.19.0] - 2024-12-19
 
 ### Added
