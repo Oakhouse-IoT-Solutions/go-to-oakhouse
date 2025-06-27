@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2024-12-19
+
+### Added
+- **New `db-setup` command**: Simplified database initialization replacing complex migration system
+- Enhanced database management with single-command setup
+- Improved error handling and user feedback for database operations
+
+### Removed
+- **Migration system**: Removed `oakhouse migrate` commands and related functionality
+- Deleted migration file management and auto-migration features
+- Removed complex migration CLI commands (`migrate up`, `migrate create`, etc.)
+
+### Changed
+- **Simplified database workflow**: Projects now use `oakhouse db-setup` for database initialization
+- Updated all documentation to reflect new database management approach
+- Modified project templates to use simplified database setup
+
+### Fixed
+- Resolved CLI compilation issues with missing function definitions
+- Fixed import dependencies and module structure
+- Corrected command registration for all CLI tools
+
+### Improved
+- Cleaner architecture without migration complexity
+- Better user experience with single database setup command
+- Enhanced documentation consistency across all files
+
 ## [1.8.0] - 2024-12-19
 
 ### Added

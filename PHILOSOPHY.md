@@ -80,8 +80,7 @@ oakhouse generate handler OrderHandler
 oakhouse generate service PaymentService
 
 # Database operations
-oakhouse migrate up
-oakhouse migrate create add_users_table
+oakhouse db-setup
 
 # Development server with hot reload
 oakhouse serve
@@ -112,7 +111,7 @@ Leveraging Go's strengths:
 Common functionality works out of the box:
 
 #### Database Integration
-- **GORM Integration**: Powerful ORM with migrations
+- **GORM Integration**: Powerful ORM with database management
 - **Multiple Databases**: PostgreSQL, MySQL, SQLite support
 - **Connection Pooling**: Optimized database connections
 - **Query Scopes**: Reusable query logic

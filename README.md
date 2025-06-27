@@ -64,8 +64,8 @@ oakhouse add database
 cp .env.example .env
 # Edit .env with your database credentials
 
-# Run migrations
-oakhouse migrate up
+# Initialize database
+oakhouse db-setup
 ```
 
 This approach allows you to:
@@ -296,17 +296,8 @@ oakhouse generate middleware <name>
 ### Database Operations
 
 ```bash
-# Run migrations
-oakhouse migrate up
-
-# Rollback migrations
-oakhouse migrate down
-
-# Create new migration
-oakhouse migrate create <name>
-
-# Check migration status
-oakhouse migrate status
+# Initialize database
+oakhouse db-setup
 ```
 
 ## Testing

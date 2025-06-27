@@ -57,8 +57,8 @@ go mod tidy
 cp .env.example .env
 # Edit .env with your database credentials
 
-# Run migrations
-oakhouse migrate up
+# Initialize database
+oakhouse db-setup
 
 # Start development server
 oakhouse serve
@@ -126,8 +126,7 @@ my-blog-api/
 ├── util/
 │   ├── response.go            # Response utilities
 │   └── pagination.go          # Pagination utilities
-├── migrations/
-│   └── 001_create_users.sql   # Database migrations
+
 ├── .env.example               # Environment template
 ├── .env                       # Environment variables
 ├── docker-compose.yml         # Docker services
@@ -173,17 +172,8 @@ oakhouse generate middleware RoleCheck
 ### Database Operations
 
 ```bash
-# Run all pending migrations
-oakhouse migrate up
-
-# Rollback last migration
-oakhouse migrate down
-
-# Create new migration
-oakhouse migrate create add_posts_table
-
-# Check migration status
-oakhouse migrate status
+# Initialize database
+oakhouse db-setup
 ```
 
 ## Configuration
@@ -744,51 +734,7 @@ func RateLimit(requests int, duration time.Duration) fiber.Handler {
 
 ## Database Operations
 
-### Migrations
 
-Create migration files in the `migrations/` directory:
-
-```sql
--- migrations/001_create_users_table.up.sql
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role VARCHAR(50) DEFAULT 'user',
-    is_active BOOLEAN DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    deleted_at TIMESTAMP WITH TIME ZONE
-);
-
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_role ON users(role);
-CREATE INDEX idx_users_deleted_at ON users(deleted_at);
-```
-
-```sql
--- migrations/001_create_users_table.down.sql
-DROP TABLE IF EXISTS users;
-```
-
-### Running Migrations
-
-```bash
-# Create new migration
-oakhouse migrate create create_posts_table
-
-# Run all pending migrations
-oakhouse migrate up
-
-# Rollback last migration
-oakhouse migrate down
-
-# Check migration status
-oakhouse migrate status
-```
 
 ## Authentication
 
@@ -1197,8 +1143,8 @@ oakhouse generate resource Comment content:text post_id:uuid author_id:uuid
 # Post Post `gorm:"foreignKey:PostID"`
 # Author User `gorm:"foreignKey:AuthorID"`
 
-# Run migrations
-oakhouse migrate up
+# Initialize database
+oakhouse db-setup
 
 # Start development server
 oakhouse serve

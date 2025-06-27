@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	version = "1.8.0"
+	version = "1.9.0"
 )
 
 func main() {
@@ -26,7 +26,7 @@ Created by Htet Waiyan From Oakhouse`,
 	rootCmd.AddCommand(generateCmd())
 	rootCmd.AddCommand(addCmd())
 	rootCmd.AddCommand(serveCmd())
-	rootCmd.AddCommand(migrateCmd())
+	rootCmd.AddCommand(dbSetupCmd())
 	rootCmd.AddCommand(buildCmd())
 
 	if err := rootCmd.Execute(); err != nil {
@@ -105,7 +105,7 @@ func addDatabaseCmd() *cobra.Command {
 			fmt.Println("✅ Database support added successfully!")
 			fmt.Println("💡 Don't forget to:")
 			fmt.Println("   1. Set database environment variables in .env")
-			fmt.Println("   2. Run 'oakhouse migrate up' to create tables")
+			fmt.Println("   2. Run 'oakhouse db-setup' to initialize database")
 		},
 	}
 	return cmd
@@ -304,82 +304,17 @@ func serveCmd() *cobra.Command {
 	return cmd
 }
 
-// migrateCmd handles database migrations
-func migrateCmd() *cobra.Command {
+// dbSetupCmd sets up the database
+func dbSetupCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "migrate",
-		Short: "Database migration commands",
-	}
-
-	// Add migrate subcommands
-	cmd.AddCommand(migrateUpCmd())
-	cmd.AddCommand(migrateDownCmd())
-	cmd.AddCommand(migrateCreateCmd())
-	cmd.AddCommand(migrateStatusCmd())
-
-	return cmd
-}
-
-// migrateUpCmd runs migrations
-func migrateUpCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "up",
-		Short: "Run pending migrations",
+		Use:   "db-setup",
+		Short: "Initialize database connection and setup",
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := runMigrations(); err != nil {
-				fmt.Fprintf(os.Stderr, "Error running migrations: %v\n", err)
+			if err := setupDatabase(); err != nil {
+				fmt.Fprintf(os.Stderr, "Error setting up database: %v\n", err)
 				os.Exit(1)
 			}
-			fmt.Println("✅ Migrations completed successfully!")
-		},
-	}
-	return cmd
-}
-
-// migrateDownCmd rollbacks migrations
-func migrateDownCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "down",
-		Short: "Rollback the last migration",
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := rollbackMigration(); err != nil {
-				fmt.Fprintf(os.Stderr, "Error rolling back migration: %v\n", err)
-				os.Exit(1)
-			}
-			fmt.Println("✅ Migration rolled back successfully!")
-		},
-	}
-	return cmd
-}
-
-// migrateCreateCmd creates a new migration
-func migrateCreateCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "create [name]",
-		Short: "Create a new migration file",
-		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
-			migrationName := args[0]
-			if err := createMigration(migrationName); err != nil {
-				fmt.Fprintf(os.Stderr, "Error creating migration: %v\n", err)
-				os.Exit(1)
-			}
-			fmt.Printf("✅ Migration '%s' created successfully!\n", migrationName)
-		},
-	}
-	return cmd
-}
-
-// migrateStatusCmd shows migration status
-func migrateStatusCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "status",
-		Short: "Show migration status",
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := showMigrationStatus(); err != nil {
-				fmt.Fprintf(os.Stderr, "Error showing migration status: %v\n", err)
-				os.Exit(1)
-			}
+			fmt.Println("✅ Database setup completed successfully!")
 		},
 	}
 	return cmd

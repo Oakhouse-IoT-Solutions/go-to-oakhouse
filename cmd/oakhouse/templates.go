@@ -217,7 +217,7 @@ const indexHtmlTemplate = `<!DOCTYPE html>
             
             <div class="feature-card">
                 <h3>🗄️ GORM Integration</h3>
-                <p>Advanced ORM with scoping support and automatic database migrations.</p>
+                <p>Advanced ORM with scoping support and database management.</p>
             </div>
             
             <div class="feature-card">
@@ -688,24 +688,14 @@ func NewDatabaseAdapter(cfg *config.Config) (*DatabaseAdapter, error) {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	// Auto-migrate models
-	if err := autoMigrate(db); err != nil {
-		return nil, fmt.Errorf("failed to auto-migrate: %w", err)
-	}
+
 
 	log.Println("✅ Database connected successfully")
 
 	return &DatabaseAdapter{DB: db}, nil
 }
 
-func autoMigrate(db *gorm.DB) error {
-	// Add your models here for auto-migration
-	// return db.AutoMigrate(
-	//     &model.User{},
-//     &model.Product{},
-	// )
-	return nil
-}
+
 
 func (d *DatabaseAdapter) Close() error {
 	sqlDB, err := d.DB.DB()
@@ -1018,8 +1008,7 @@ help:
 	@echo "  docker-build Build Docker image"
 	@echo "  docker-run   Run Docker container"
 	@echo "  dev          Start development server"
-	@echo "  migrate-up   Run database migrations"
-	@echo "  migrate-down Rollback database migrations"
+
 
 build:
 	@echo "Building $(APP_NAME)..."
@@ -1060,13 +1049,7 @@ docker-compose-down:
 	@echo "Stopping services..."
 	docker-compose down
 
-migrate-up:
-	@echo "Running migrations..."
-	oakhouse migrate up
 
-migrate-down:
-	@echo "Rolling back migrations..."
-	oakhouse migrate down
 
 install-deps:
 	@echo "Installing dependencies..."

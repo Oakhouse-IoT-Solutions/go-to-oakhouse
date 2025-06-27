@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
-	"time"
 )
 
 // createNewProject creates a new Go To Oakhouse project
@@ -32,7 +31,6 @@ func createNewProject(projectName string) error {
 		"util",
 		"middleware",
 		"entity",
-		"migrations",
 		"static",
 	}
 
@@ -363,43 +361,7 @@ func startDevServer(host string, port int) error {
 	return cmd.Run()
 }
 
-// runMigrations runs database migrations
-func runMigrations() error {
-	fmt.Println("🔄 Running database migrations...")
-	// Implementation would depend on migration tool
-	return nil
-}
 
-// rollbackMigration rolls back the last migration
-func rollbackMigration() error {
-	fmt.Println("⏪ Rolling back last migration...")
-	// Implementation would depend on migration tool
-	return nil
-}
-
-// createMigration creates a new migration file
-func createMigration(name string) error {
-	timestamp := time.Now().Format("20060102150405")
-	filename := fmt.Sprintf("migrations/%s_%s.sql", timestamp, name)
-
-	content := fmt.Sprintf(`-- Migration: %s
--- Created at: %s
-
--- Up migration
-
--- Down migration
-`, name, time.Now().Format("2006-01-02 15:04:05"))
-
-	return os.WriteFile(filename, []byte(content), 0644)
-}
-
-// showMigrationStatus shows migration status
-func showMigrationStatus() error {
-	fmt.Println("📊 Migration Status:")
-	// Implementation would show actual migration status
-	fmt.Println("  All migrations are up to date")
-	return nil
-}
 
 // buildApplication builds the application for production
 func buildApplication() error {
@@ -542,5 +504,27 @@ DB_SSL_MODE=disable
 	}
 	
 	fmt.Println("✅ Database support configured!")
+	return nil
+}
+
+// setupDatabase initializes the database
+func setupDatabase() error {
+	fmt.Println("🔧 Setting up database...")
+	
+	// Check if .env file exists
+	if _, err := os.Stat(".env"); os.IsNotExist(err) {
+		return fmt.Errorf(".env file not found. Please copy .env.example to .env and configure your database settings")
+	}
+	
+	// Run go run main.go to initialize database
+	cmd := exec.Command("go", "run", "main.go")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to initialize database: %w", err)
+	}
+	
+	fmt.Println("✅ Database setup completed!")
 	return nil
 }
