@@ -5,21 +5,22 @@
 1. [Installation](#installation)
 2. [Quick Start](#quick-start)
 3. [Project Structure](#project-structure)
-4. [CLI Commands](#cli-commands)
-5. [Configuration](#configuration)
-6. [Models and Entities](#models-and-entities)
-7. [Repositories](#repositories)
-8. [Services](#services)
-9. [Handlers](#handlers)
-10. [DTOs (Data Transfer Objects)](#dtos-data-transfer-objects)
-11. [Scopes](#scopes)
-12. [Middleware](#middleware)
-13. [Database Operations](#database-operations)
-14. [Authentication](#authentication)
-15. [Testing](#testing)
-16. [Deployment](#deployment)
-17. [Best Practices](#best-practices)
-18. [Examples](#examples)
+4. [Dependency Injection with Wire](#dependency-injection-with-wire)
+5. [CLI Commands](#cli-commands)
+6. [Configuration](#configuration)
+7. [Models and Entities](#models-and-entities)
+8. [Repositories](#repositories)
+9. [Services](#services)
+10. [Handlers](#handlers)
+11. [DTOs (Data Transfer Objects)](#dtos-data-transfer-objects)
+12. [Scopes](#scopes)
+13. [Middleware](#middleware)
+14. [Database Operations](#database-operations)
+15. [Authentication](#authentication)
+16. [Testing](#testing)
+17. [Deployment](#deployment)
+18. [Best Practices](#best-practices)
+19. [Examples](#examples)
 
 ## Installation
 
@@ -29,17 +30,18 @@
 - PostgreSQL (recommended) or MySQL
 - Redis (optional, for caching)
 
-### What's New in v1.9.0
+### What's New in v1.11.0
 
-- **Simplified Database Management**: Replaced complex migration system with streamlined database connection setup
-- **Streamlined Workflow**: No more migration files to manage - just run `oakhouse add database` to set up database support
-- **Improved CLI Stability**: Fixed compilation issues and dependency conflicts
-- **Cleaner Architecture**: Removed migration complexity for a more straightforward development experience
+- **Enhanced Branding**: Added signature branding throughout the CLI tool and generated code
+- **Improved User Experience**: Enhanced success messages with consistent branding across all commands
+- **Visual Enhancements**: Updated all command outputs with modern emojis and styling
+- **Consistent Messaging**: Unified branding across all generated templates and CLI interactions
+- **Professional Attribution**: Added "🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡" signature to all outputs
 
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.9.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.11.0
 ```
 
 ### Verify Installation
@@ -141,6 +143,401 @@ my-blog-api/
 ├── Makefile                   # Build commands
 └── go.mod                     # Go dependencies
 ```
+
+## Dependency Injection with Wire
+
+### Why We Use Wire for Dependency Injection
+
+Go To Oakhouse leverages [Google Wire](https://github.com/google/wire) for compile-time dependency injection, providing a robust foundation for building maintainable and testable applications. Here's why Wire is the perfect choice for our framework:
+
+#### **1. Compile-Time Safety**
+
+Unlike runtime dependency injection frameworks, Wire generates code at compile time, which means:
+
+- **Zero Runtime Overhead**: No reflection or runtime container lookups
+- **Early Error Detection**: Dependency issues are caught during compilation, not at runtime
+- **Type Safety**: Full Go type checking ensures your dependencies are correctly wired
+- **Performance**: Generated code is as fast as hand-written dependency management
+
+```go
+// Wire generates this code for you at compile time
+func InitializeApp() (*server.AppServer, func(), error) {
+    config := config.Load()
+    db, cleanup, err := NewDatabaseAdapter(config)
+    if err != nil {
+        return nil, nil, err
+    }
+    appServer := server.NewAppServer(config, db)
+    return appServer, cleanup, nil
+}
+```
+
+#### **2. Explicit Dependency Graph**
+
+Wire makes your application's dependency relationships crystal clear:
+
+```go
+// cmd/wire.go - Your dependency providers are explicitly declared
+var ProviderSet = wire.NewSet(
+    config.Load,           // Configuration provider
+    NewDatabaseAdapter,    // Database connection provider  
+    server.NewAppServer,   // Application server provider
+)
+```
+
+This explicit approach provides several benefits:
+- **Transparency**: Anyone can understand the dependency graph by reading the provider set
+- **Maintainability**: Easy to modify dependencies without hunting through configuration files
+- **Documentation**: The provider set serves as living documentation of your app's architecture
+
+#### **3. Testing Excellence**
+
+Wire's approach makes testing significantly easier:
+
+```go
+// Easy to create test-specific dependency graphs
+var TestProviderSet = wire.NewSet(
+    config.LoadTest,        // Test configuration
+    NewMockDatabase,        // Mock database for testing
+    server.NewAppServer,    // Real app server
+)
+
+// Wire generates: InitializeTestApp() (*server.AppServer, func(), error)
+```
+
+**Testing Benefits:**
+- **Isolated Testing**: Each component can be tested with mock dependencies
+- **Integration Testing**: Easy to wire up real components for integration tests
+- **No Test Pollution**: Clean separation between test and production dependencies
+
+#### **4. Scalability and Maintainability**
+
+As your application grows, Wire scales with you:
+
+```go
+// Adding new services is straightforward
+var ProviderSet = wire.NewSet(
+    // Core dependencies
+    config.Load,
+    NewDatabaseAdapter,
+    
+    // Services
+    service.NewUserService,
+    service.NewPostService,
+    service.NewEmailService,    // New service added easily
+    
+    // Handlers
+    handler.NewUserHandler,
+    handler.NewPostHandler,
+    
+    // Application
+    server.NewAppServer,
+)
+```
+
+**Scalability Benefits:**
+- **Modular Growth**: Add new dependencies without refactoring existing code
+- **Clear Boundaries**: Each component has well-defined dependencies
+- **Refactoring Safety**: Compiler catches breaking changes when restructuring
+
+#### **5. Go-Native Philosophy**
+
+Wire aligns perfectly with Go's design principles:
+
+- **Simplicity**: No magic, no annotations, just plain Go code
+- **Explicitness**: Dependencies are clearly declared, not hidden in configuration
+- **Performance**: Zero runtime cost, maximum compile-time benefits
+- **Tooling**: Full IDE support with autocomplete, refactoring, and navigation
+
+### How Wire Works in Go To Oakhouse
+
+#### **1. Provider Functions**
+
+Each component in your application has a provider function:
+
+```go
+// config/config.go
+func Load() Config {
+    return Config{
+        Port:     getEnv("APP_PORT", "8080"),
+        Database: getEnv("DB_HOST", "localhost"),
+        // ... other config
+    }
+}
+
+// adapter/database.go
+func NewDatabaseAdapter(config config.Config) (*DatabaseAdapter, func(), error) {
+    db, err := gorm.Open(postgres.Open(config.DatabaseURL), &gorm.Config{})
+    if err != nil {
+        return nil, nil, err
+    }
+    
+    cleanup := func() {
+        sqlDB, _ := db.DB()
+        sqlDB.Close()
+    }
+    
+    return &DatabaseAdapter{DB: db}, cleanup, nil
+}
+
+// server/app_server.go
+func NewAppServer(config config.Config, db *adapter.DatabaseAdapter) *AppServer {
+    return &AppServer{
+        Config: config,
+        DB:     db,
+        App:    fiber.New(),
+    }
+}
+```
+
+#### **2. Wire Configuration**
+
+The `cmd/wire.go` file defines how components are wired together:
+
+```go
+//go:generate wire
+//go:build wireinject
+// +build wireinject
+
+package main
+
+import (
+    "github.com/google/wire"
+    "your-project/config"
+    "your-project/adapter"
+    "your-project/server"
+)
+
+// ProviderSet is a Wire provider set that includes all dependencies
+var ProviderSet = wire.NewSet(
+    config.Load,
+    NewDatabaseAdapter,
+    server.NewAppServer,
+)
+
+// InitializeApp initializes the application with all dependencies
+func InitializeApp() (*server.AppServer, func(), error) {
+    wire.Build(ProviderSet)
+    return nil, nil, nil
+}
+```
+
+#### **3. Code Generation**
+
+When you run `go generate ./cmd` or `make wire-gen`, Wire generates the actual implementation:
+
+```go
+// cmd/wire_gen.go (generated by Wire)
+func InitializeApp() (*server.AppServer, func(), error) {
+    config := config.Load()
+    databaseAdapter, cleanup, err := NewDatabaseAdapter(config)
+    if err != nil {
+        return nil, nil, err
+    }
+    appServer := server.NewAppServer(config, databaseAdapter)
+    return appServer, cleanup, nil
+}
+```
+
+### Wire vs. Other Dependency Injection Approaches
+
+| Approach | Runtime Cost | Type Safety | Compile-Time Errors | Learning Curve |
+|----------|--------------|-------------|--------------------|-----------------|
+| **Wire** | ✅ Zero | ✅ Full | ✅ Yes | 🟡 Medium |
+| Manual DI | ✅ Zero | ✅ Full | ✅ Yes | ✅ Low |
+| Runtime DI | ❌ High | ❌ Limited | ❌ No | ❌ High |
+| Service Locator | 🟡 Medium | ❌ Limited | ❌ No | 🟡 Medium |
+
+### Best Practices with Wire
+
+#### **1. Keep Providers Simple**
+
+```go
+// Good: Simple, focused provider
+func NewUserService(repo repository.UserRepository) service.UserService {
+    return &userService{repo: repo}
+}
+
+// Avoid: Complex initialization logic in providers
+func NewUserService(config Config) service.UserService {
+    // Don't do complex setup here
+    // Keep providers focused on dependency injection
+}
+```
+
+#### **2. Use Interfaces for Flexibility**
+
+```go
+// Define interfaces for better testing and flexibility
+type UserRepository interface {
+    Create(user *entity.User) error
+    FindByID(id string) (*entity.User, error)
+}
+
+// Provider returns interface, not concrete type
+func NewUserRepository(db *gorm.DB) UserRepository {
+    return &userRepository{db: db}
+}
+```
+
+#### **3. Group Related Providers**
+
+```go
+// Group providers by domain or layer
+var DatabaseProviderSet = wire.NewSet(
+    NewDatabaseAdapter,
+    NewUserRepository,
+    NewPostRepository,
+)
+
+var ServiceProviderSet = wire.NewSet(
+    NewUserService,
+    NewPostService,
+    NewEmailService,
+)
+
+var ProviderSet = wire.NewSet(
+    config.Load,
+    DatabaseProviderSet,
+    ServiceProviderSet,
+    server.NewAppServer,
+)
+```
+
+### Getting Started with Wire
+
+When you create a new Go To Oakhouse project, Wire is automatically configured:
+
+1. **Wire dependency** is added to `go.mod`
+2. **Wire configuration** is created in `cmd/wire.go`
+3. **Makefile targets** are set up for code generation
+4. **Generated code** is automatically created during build
+
+You can regenerate Wire code anytime:
+
+```bash
+# Generate Wire code
+make wire-gen
+
+# Or manually
+go generate ./cmd
+```
+
+### Conclusion
+
+Wire represents the perfect balance of power and simplicity for dependency injection in Go. By choosing Wire, Go To Oakhouse provides:
+
+- **Developer Productivity**: Focus on business logic, not dependency management
+- **Application Reliability**: Compile-time safety prevents runtime dependency errors
+- **Testing Excellence**: Easy mocking and isolated testing
+- **Performance**: Zero runtime overhead with maximum compile-time benefits
+- **Go Philosophy**: Simple, explicit, and performant dependency management
+
+This foundation enables you to build scalable, maintainable applications with confidence, knowing that your dependency graph is correct, efficient, and easy to understand.
+
+### Example Wire Usage
+
+Here's a practical example of how Wire works in a Go To Oakhouse project:
+
+```go
+// cmd/wire.go
+//go:generate wire
+//go:build wireinject
+// +build wireinject
+
+package main
+
+import (
+    "github.com/google/wire"
+    "my-blog-api/config"
+    "my-blog-api/adapter"
+    "my-blog-api/repository"
+    "my-blog-api/service"
+    "my-blog-api/handler"
+    "my-blog-api/server"
+)
+
+// ProviderSet includes all application dependencies
+var ProviderSet = wire.NewSet(
+    // Core
+    config.Load,
+    adapter.NewDatabaseAdapter,
+    
+    // Repositories
+    repository.NewUserRepository,
+    repository.NewPostRepository,
+    
+    // Services
+    service.NewUserService,
+    service.NewPostService,
+    
+    // Handlers
+    handler.NewUserHandler,
+    handler.NewPostHandler,
+    
+    // Server
+    server.NewAppServer,
+)
+
+// InitializeApp wires up the entire application
+func InitializeApp() (*server.AppServer, func(), error) {
+    wire.Build(ProviderSet)
+    return nil, nil, nil
+}
+```
+
+```go
+// service/user_service.go
+type UserService interface {
+    CreateUser(dto *dto.CreateUserDTO) (*entity.User, error)
+    GetUserByID(id string) (*entity.User, error)
+}
+
+type userService struct {
+    repo repository.UserRepository
+}
+
+// NewUserService is a Wire provider function
+func NewUserService(repo repository.UserRepository) UserService {
+    return &userService{repo: repo}
+}
+
+func (s *userService) CreateUser(dto *dto.CreateUserDTO) (*entity.User, error) {
+    user := &entity.User{
+        Name:  dto.Name,
+        Email: dto.Email,
+    }
+    return s.repo.Create(user)
+}
+```
+
+```go
+// handler/user_handler.go
+type UserHandler struct {
+    service service.UserService
+}
+
+// NewUserHandler is a Wire provider function
+func NewUserHandler(service service.UserService) *UserHandler {
+    return &UserHandler{service: service}
+}
+
+func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
+    var dto dto.CreateUserDTO
+    if err := c.BodyParser(&dto); err != nil {
+        return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
+    }
+    
+    user, err := h.service.CreateUser(&dto)
+    if err != nil {
+        return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+    }
+    
+    return c.JSON(user)
+}
+```
+
+For more detailed information about Wire's capabilities, advanced usage patterns, and troubleshooting, please refer to the [official Wire documentation](https://github.com/google/wire).
 
 ## CLI Commands
 

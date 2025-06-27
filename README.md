@@ -14,19 +14,19 @@ A powerful Go framework, designed for rapid API development with clean architect
 - 🐳 **Docker Ready** - Production-ready containerization
 - 📚 **Comprehensive Documentation** - Detailed guides and examples
 
-## What's New in v1.9.0
+## What's New in v1.11.0
 
-- 🎯 **Simplified Database Management** - Replaced complex migration system with streamlined database connection setup
-- ⚡ **Streamlined Workflow** - No more migration files to manage
-- 🔧 **Improved CLI Stability** - Fixed compilation issues and dependency conflicts
-- 🏗️ **Cleaner Architecture** - Removed migration complexity for better developer experience
+- 🏡 **Enhanced Branding** - Added signature branding throughout the CLI tool and generated code
+- 🚀 **Improved User Experience** - Enhanced success messages with consistent branding
+- ✨ **Visual Enhancements** - Updated all command outputs with modern emojis and styling
+- 🎯 **Consistent Messaging** - Unified branding across all generated templates and CLI interactions
 
 ## Quick Start
 
 ### Installation
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.9.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.11.0
 ```
 
 ### Create New Project

@@ -8,16 +8,28 @@ import (
 )
 
 var (
-	version = "1.11.0"
+	version = "1.12.0"
 )
 
+// main initializes and executes the Oakhouse CLI application with all available commands.
+// Sets up the root command with version information and registers all subcommands
+// for project creation, code generation, feature addition, serving, and building.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func main() {
 	rootCmd := &cobra.Command{
 		Use:     "oakhouse",
-		Short:   "Go To Oakhouse - A powerful Go framework for rapid API development",
-		Long:    `Go To Oakhouse is a Go framework for building APIs with clean architecture patterns.
+		Short:   "🚀 Go To Oakhouse - A powerful Go framework for rapid API development",
+		Long:    `🚀 Go To Oakhouse is a Go framework for building APIs with clean architecture patterns.
 
-Created by Htet Waiyan From Oakhouse`,
+🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+
+Features:
+• Clean Architecture patterns
+• Rapid API development
+• Auto-generated CRUD operations
+• Built-in authentication middleware
+• Database migrations support
+• Docker containerization`,
 		Version: version,
 	}
 
@@ -34,7 +46,10 @@ Created by Htet Waiyan From Oakhouse`,
 	}
 }
 
-// newCmd creates a new project
+// newCmd creates the 'new' command for generating new Oakhouse projects.
+// Initializes a complete project structure with all necessary files, dependencies,
+// and configuration for rapid API development with clean architecture patterns.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func newCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "new [project-name]",
@@ -46,17 +61,22 @@ func newCmd() *cobra.Command {
 				fmt.Fprintf(os.Stderr, "Error creating project: %v\n", err)
 				os.Exit(1)
 			}
-			fmt.Printf("✅ Project '%s' created successfully!\n", projectName)
-			fmt.Printf("\nNext steps:\n")
+			fmt.Printf("\n🚀 Project '%s' created successfully!\n", projectName)
+			fmt.Printf("🏡 Proudly Created by Htet Waiyan From Oakhouse\n\n")
+			fmt.Printf("Next steps:\n")
 			fmt.Printf("  cd %s\n", projectName)
 			fmt.Printf("  cp .env.example .env\n")
-			fmt.Printf("  oakhouse serve\n")
+			fmt.Printf("  oakhouse serve\n\n")
+			fmt.Printf("🚀 Happy coding with Oakhouse! 🏡\n")
 		},
 	}
 	return cmd
 }
 
-// generateCmd handles code generation
+// generateCmd creates the 'generate' command group for code generation operations.
+// Provides subcommands for generating models, handlers, services, repositories, DTOs,
+// scopes, middleware, routes, and complete resources with proper CLI organization.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func generateCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "generate",
@@ -78,7 +98,10 @@ func generateCmd() *cobra.Command {
 	return cmd
 }
 
-// addCmd handles adding features to existing projects
+// addCmd creates the 'add' command group for adding features to existing projects.
+// Allows developers to enhance existing projects with additional capabilities
+// like database support, authentication, and other framework features.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func addCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add",
@@ -91,7 +114,10 @@ func addCmd() *cobra.Command {
 	return cmd
 }
 
-// addDatabaseCmd adds database support to existing project
+// addDatabaseCmd creates the command for adding database support to existing projects.
+// Configures database connection requirements, updates environment variables,
+// and modifies application configuration for persistent data storage.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func addDatabaseCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "database",
@@ -109,7 +135,10 @@ func addDatabaseCmd() *cobra.Command {
 	return cmd
 }
 
-// generateResourceCmd generates a complete resource
+// generateResourceCmd creates the command for generating complete REST resources.
+// Generates model, repository, service, handler, DTOs, and routes in one command,
+// providing a full CRUD implementation following clean architecture principles.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func generateResourceCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "resource [name] [fields...]",
@@ -123,8 +152,9 @@ func generateResourceCmd() *cobra.Command {
 				fmt.Fprintf(os.Stderr, "Error generating resource: %v\n", err)
 				os.Exit(1)
 			}
-			fmt.Printf("✅ Resource '%s' generated successfully!\n", resourceName)
-			fmt.Println("\n📁 Created files:")
+			fmt.Printf("🚀 Resource '%s' generated successfully!\n", resourceName)
+			fmt.Printf("🏡 Proudly Created by Htet Waiyan From Oakhouse\n\n")
+			fmt.Println("📁 Created files:")
 			for _, file := range createdFiles {
 				fmt.Printf("   %s\n", file)
 			}
@@ -133,7 +163,10 @@ func generateResourceCmd() *cobra.Command {
 	return cmd
 }
 
-// generateModelCmd generates a model
+// generateModelCmd creates the command for generating GORM models.
+// Creates database models with UUID primary keys, timestamps, soft delete support,
+// and proper GORM tags for database operations and JSON serialization.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func generateModelCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "model [name] [fields...]",
@@ -146,13 +179,17 @@ func generateModelCmd() *cobra.Command {
 				fmt.Fprintf(os.Stderr, "Error generating model: %v\n", err)
 				os.Exit(1)
 			}
-			fmt.Printf("✅ Model '%s' generated successfully!\n", modelName)
+			fmt.Printf("🚀 Model '%s' generated successfully!\n", modelName)
+			fmt.Printf("🏡 Proudly Created by Htet Waiyan From Oakhouse\n")
 		},
 	}
 	return cmd
 }
 
-// generateHandlerCmd generates a handler
+// generateHandlerCmd creates the command for generating HTTP handlers.
+// Creates REST API handlers with full CRUD endpoints, proper status codes,
+// request validation, error handling, and JSON responses following REST conventions.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func generateHandlerCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "handler [name]",
@@ -164,13 +201,17 @@ func generateHandlerCmd() *cobra.Command {
 				fmt.Fprintf(os.Stderr, "Error generating handler: %v\n", err)
 				os.Exit(1)
 			}
-			fmt.Printf("✅ Handler '%s' generated successfully!\n", handlerName)
+			fmt.Printf("🚀 Handler '%s' generated successfully!\n", handlerName)
+			fmt.Printf("🏡 Proudly Created by Htet Waiyan From Oakhouse\n")
 		},
 	}
 	return cmd
 }
 
-// generateServiceCmd generates a service
+// generateServiceCmd creates the command for generating service layer implementations.
+// Creates business logic services with data transformation, validation, and clean interfaces
+// between handlers and repositories following the service pattern.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func generateServiceCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "service [name]",
@@ -182,13 +223,17 @@ func generateServiceCmd() *cobra.Command {
 				fmt.Fprintf(os.Stderr, "Error generating service: %v\n", err)
 				os.Exit(1)
 			}
-			fmt.Printf("✅ Service '%s' generated successfully!\n", serviceName)
+			fmt.Printf("🚀 Service '%s' generated successfully!\n", serviceName)
+			fmt.Printf("🏡 Proudly Created by Htet Waiyan From Oakhouse\n")
 		},
 	}
 	return cmd
 }
 
-// generateRepositoryCmd generates a repository
+// generateRepositoryCmd creates the command for generating repository implementations.
+// Creates data access layer with full CRUD operations, context support, GORM scopes,
+// pagination, and proper error handling following the repository pattern.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func generateRepositoryCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "repository [name]",
@@ -201,13 +246,17 @@ func generateRepositoryCmd() *cobra.Command {
 				fmt.Fprintf(os.Stderr, "Error generating repository: %v\n", err)
 				os.Exit(1)
 			}
-			fmt.Printf("✅ Repository '%s' generated successfully!\n", repoName)
+			fmt.Printf("🚀 Repository '%s' generated successfully!\n", repoName)
+			fmt.Printf("🏡 Proudly Created by Htet Waiyan From Oakhouse\n")
 		},
 	}
 	return cmd
 }
 
-// generateDTOCmd generates DTOs
+// generateDTOCmd creates the command for generating Data Transfer Objects.
+// Creates separate DTOs for Create, Update, and Get operations with proper validation tags
+// for clean separation between API contracts and internal data models.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func generateDTOCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "dto [name]",
@@ -219,13 +268,17 @@ func generateDTOCmd() *cobra.Command {
 				fmt.Fprintf(os.Stderr, "Error generating DTO: %v\n", err)
 				os.Exit(1)
 			}
-			fmt.Printf("✅ DTOs for '%s' generated successfully!\n", dtoName)
+			fmt.Printf("🚀 DTOs for '%s' generated successfully!\n", dtoName)
+			fmt.Printf("🏡 Proudly Created by Htet Waiyan From Oakhouse\n")
 		},
 	}
 	return cmd
 }
 
-// generateScopeCmd generates a scope
+// generateScopeCmd creates the command for generating GORM scopes.
+// Creates reusable query condition functions that can be composed and reused
+// across different repository methods, promoting DRY principles.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func generateScopeCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "scope [name] [scope-name]",
@@ -238,13 +291,17 @@ func generateScopeCmd() *cobra.Command {
 				fmt.Fprintf(os.Stderr, "Error generating scope: %v\n", err)
 				os.Exit(1)
 			}
-			fmt.Printf("✅ Scope '%s' for '%s' generated successfully!\n", scopeName, modelName)
+			fmt.Printf("🚀 Scope '%s' for '%s' generated successfully!\n", scopeName, modelName)
+			fmt.Printf("🏡 Proudly Created by Htet Waiyan From Oakhouse\n")
 		},
 	}
 	return cmd
 }
 
-// generateMiddlewareCmd generates middleware
+// generateMiddlewareCmd creates the command for generating HTTP middleware.
+// Creates reusable middleware functions for cross-cutting concerns like authentication,
+// logging, CORS, rate limiting, and other request/response processing.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func generateMiddlewareCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "middleware [name]",
@@ -256,13 +313,17 @@ func generateMiddlewareCmd() *cobra.Command {
 				fmt.Fprintf(os.Stderr, "Error generating middleware: %v\n", err)
 				os.Exit(1)
 			}
-			fmt.Printf("✅ Middleware '%s' generated successfully!\n", middlewareName)
+			fmt.Printf("🚀 Middleware '%s' generated successfully!\n", middlewareName)
+			fmt.Printf("🏡 Proudly Created by Htet Waiyan From Oakhouse\n")
 		},
 	}
 	return cmd
 }
 
-// generateRouteCmd generates routes for a resource
+// generateRouteCmd creates the command for generating HTTP routes.
+// Creates route definitions with proper HTTP methods, path parameters,
+// middleware integration, and handler binding for complete API functionality.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func generateRouteCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "route [name]",
@@ -274,13 +335,17 @@ func generateRouteCmd() *cobra.Command {
 				fmt.Fprintf(os.Stderr, "Error generating route: %v\n", err)
 				os.Exit(1)
 			}
-			fmt.Printf("✅ Routes for '%s' generated successfully!\n", routeName)
+			fmt.Printf("🚀 Routes for '%s' generated successfully!\n", routeName)
+			fmt.Printf("🏡 Proudly Created by Htet Waiyan From Oakhouse\n")
 		},
 	}
 	return cmd
 }
 
-// serveCmd starts the development server
+// serveCmd creates the command for starting the development server.
+// Provides hot reload capabilities using Air if available, with configurable host and port,
+// enabling live development experience with automatic server restart on code changes.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func serveCmd() *cobra.Command {
 	var port int
 	var host string
@@ -304,7 +369,10 @@ func serveCmd() *cobra.Command {
 
 
 
-// buildCmd builds the application for production
+// buildCmd creates the command for building the application for production.
+// Compiles the application into an optimized binary executable ready for deployment,
+// with all dependencies statically linked for production environments.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func buildCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "build",

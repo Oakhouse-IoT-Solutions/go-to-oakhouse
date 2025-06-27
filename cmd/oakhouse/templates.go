@@ -10,6 +10,7 @@ require (
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/uuid v1.5.0
+	github.com/google/wire v0.5.0
 	github.com/joho/godotenv v1.4.0
 	github.com/redis/go-redis/v9 v9.3.0
 	gorm.io/gorm v1.25.5
@@ -333,7 +334,8 @@ volumes:
   redis_data:
 `
 
-const mainGoTemplate = `package main
+const mainGoTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package main
 
 import (
 	"context"
@@ -348,8 +350,12 @@ import (
 func main() {
 	ctx := context.Background()
 
-	// Initialize application server
-	app := NewAppServer().Init()
+	// Initialize application server using Wire
+	app, cleanup, err := InitializeApp()
+	if err != nil {
+		log.Fatalf("Failed to initialize app: %v", err)
+	}
+	defer cleanup()
 
 	// Start server in a goroutine
 	go func() {
@@ -376,7 +382,8 @@ func main() {
 }
 `
 
-const appServerTemplate = `package main
+const appServerTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package main
 
 import (
 	"context"
@@ -402,41 +409,28 @@ type AppServer struct {
 	db *adapter.DatabaseAdapter
 }
 
-func NewAppServer() *AppServer {
-	return &AppServer{}
-}
-
-func (s *AppServer) Init() *AppServer {
-	// Load configuration
-	s.config = config.Load()
-
-	// Initialize database (optional - server can run without it)
-	var err error
-	s.db, err = adapter.NewDatabaseAdapter(s.config)
-	if err != nil {
-		log.Printf("⚠️  Database connection failed: %v", err)
-		log.Println("💡 To connect to PostgreSQL, set these environment variables:")
-		log.Println("   DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME")
-		log.Println("   Or use: oakhouse add database")
-		log.Println("🚀 Server will continue without database connection")
-		s.db = nil
+// NewAppServer creates a new AppServer instance with Wire dependency injection
+func NewAppServer(config *config.Config, db *adapter.DatabaseAdapter) *AppServer {
+	server := &AppServer{
+		config: config,
+		db: db,
 	}
 
 	// Initialize Fiber app
-	s.app = fiber.New(fiber.Config{
-		AppName: s.config.AppName,
-		ErrorHandler: s.errorHandler,
+	server.app = fiber.New(fiber.Config{
+		AppName: config.AppName,
+		ErrorHandler: server.errorHandler,
 		ReadTimeout: 10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	})
 
 	// Setup middleware
-	s.setupMiddleware()
+	server.setupMiddleware()
 
 	// Setup routes
-	s.setupRoutes()
+	server.setupRoutes()
 
-	return s
+	return server
 }
 
 func (s *AppServer) setupMiddleware() {
@@ -514,7 +508,8 @@ func (s *AppServer) Shutdown(ctx context.Context) error {
 }
 `
 
-const envConfigTemplate = `package config
+const envConfigTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package config
 
 import (
 	"os"
@@ -619,7 +614,8 @@ func getEnvBool(key string, defaultValue bool) bool {
 }
 `
 
-const routeTemplate = `package route
+const routeTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package route
 
 import (
 	"{{.ProjectName}}/adapter"
@@ -666,7 +662,8 @@ func SetupV1Routes(api fiber.Router, db *adapter.DatabaseAdapter) {
 }
 `
 
-const databaseAdapterTemplate = `package adapter
+const databaseAdapterTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package adapter
 
 import (
 	"fmt"
@@ -706,7 +703,8 @@ func (d *DatabaseAdapter) Close() error {
 }
 `
 
-const postgresAdapterTemplate = `package postgres
+const postgresAdapterTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package postgres
 
 import (
 	"fmt"
@@ -759,7 +757,8 @@ func Connect(cfg *config.Config) (*gorm.DB, error) {
 }
 `
 
-const responseUtilTemplate = `package util
+const responseUtilTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package util
 
 import "github.com/gofiber/fiber/v2"
 
@@ -822,7 +821,8 @@ func SendPaginatedSuccess(c *fiber.Ctx, message string, data interface{}, pagina
 }
 `
 
-const paginationUtilTemplate = `package util
+const paginationUtilTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package util
 
 import (
 	"math"
@@ -872,7 +872,8 @@ func CalculatePagination(page, pageSize int, total int64) Pagination {
 }
 `
 
-const baseScopeTemplate = `package scope
+const baseScopeTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package scope
 
 import "gorm.io/gorm"
 
@@ -919,7 +920,8 @@ func Offset(offset int) func(db *gorm.DB) *gorm.DB {
 }
 `
 
-const authMiddlewareTemplate = `package middleware
+const authMiddlewareTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package middleware
 
 import (
 	"strings"
@@ -992,7 +994,7 @@ func RateLimit(cfg *config.Config) fiber.Handler {
 }
 `
 
-const makefileTemplate = `.PHONY: help build run test clean docker-build docker-run
+const makefileTemplate = `.PHONY: help build run test clean docker-build docker-run wire-gen
 
 # Variables
 APP_NAME={{.ProjectName}}
@@ -1003,14 +1005,23 @@ help:
 	@echo "Available commands:"
 	@echo "  build        Build the application"
 	@echo "  run          Run the application"
+	@echo "  wire-gen     Generate Wire dependency injection code"
 	@echo "  test         Run tests"
 	@echo "  clean        Clean build artifacts"
 	@echo "  docker-build Build Docker image"
 	@echo "  docker-run   Run Docker container"
 	@echo "  dev          Start development server"
 
+# Generate Wire dependency injection code
+wire-gen:
+	@echo "Generating Wire code..."
+	@if ! command -v wire >/dev/null 2>&1; then \
+		echo "Installing Wire..."; \
+		go install github.com/google/wire/cmd/wire@latest; \
+	fi
+	go generate ./cmd
 
-build:
+build: wire-gen
 	@echo "Building $(APP_NAME)..."
 	go build -o bin/$(APP_NAME) cmd/main.go
 
@@ -1018,7 +1029,7 @@ run: build
 	@echo "Running $(APP_NAME)..."
 	./bin/$(APP_NAME)
 
-dev:
+dev: wire-gen
 	@echo "Starting development server..."
 	air
 
@@ -1033,7 +1044,9 @@ test-coverage:
 clean:
 	@echo "Cleaning..."
 	rm -rf bin/
-	docker-build:
+	rm -f cmd/wire_gen.go
+
+docker-build:
 	@echo "Building Docker image..."
 	docker build -t $(DOCKER_IMAGE) .
 
@@ -1049,8 +1062,6 @@ docker-compose-down:
 	@echo "Stopping services..."
 	docker-compose down
 
-
-
 install-deps:
 	@echo "Installing dependencies..."
 	go mod tidy
@@ -1063,4 +1074,42 @@ format:
 lint:
 	@echo "Running linter..."
 	golangci-lint run
+`
+
+const wireTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+//go:generate wire
+//go:build wireinject
+// +build wireinject
+
+package main
+
+import (
+	"{{.ProjectName}}/config"
+	"{{.ProjectName}}/adapter"
+
+	"github.com/google/wire"
+)
+
+// ProviderSet is a Wire provider set that includes all the dependencies
+var ProviderSet = wire.NewSet(
+	config.Load,
+	ProvideDatabase,
+	NewAppServer,
+)
+
+// ProvideDatabase creates a new database adapter with error handling
+func ProvideDatabase(cfg *config.Config) *adapter.DatabaseAdapter {
+	db, err := adapter.NewDatabaseAdapter(cfg)
+	if err != nil {
+		// Return nil database but don't fail - server can run without DB
+		return nil
+	}
+	return db
+}
+
+// InitializeApp initializes the application with all dependencies using Wire
+func InitializeApp() (*AppServer, func(), error) {
+	wire.Build(ProviderSet)
+	return &AppServer{}, func() {}, nil
+}
 `

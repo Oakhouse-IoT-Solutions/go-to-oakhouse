@@ -3,7 +3,8 @@ package main
 import "strings"
 
 // Model templates
-const modelTemplate = `package model
+const modelTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package model
 
 import (
 	"time"
@@ -25,7 +26,8 @@ func ({{.ModelName}}) TableName() string {
 `
 
 // Repository templates
-const repositoryInterfaceTemplate = `package repository
+const repositoryInterfaceTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package repository
 
 import (
 	"context"
@@ -45,7 +47,8 @@ type {{.ModelName}}Repository interface {
 }
 `
 
-const repositoryImplTemplate = `package repository
+const repositoryImplTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package repository
 
 import (
 	"context"
@@ -139,7 +142,8 @@ func (r *{{.VarName}}Repository) FindWithPagination(ctx context.Context, offset,
 `
 
 // Service templates
-const serviceInterfaceTemplate = `package service
+const serviceInterfaceTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package service
 
 import (
 	"context"
@@ -158,7 +162,8 @@ type {{.ModelName}}Service interface {
 }
 `
 
-const serviceImplTemplate = `package service
+const serviceImplTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package service
 
 import (
 	"context"
@@ -241,7 +246,8 @@ func (s *{{.VarName}}Service) buildScopes(dto *{{.PackageName}}.Get{{.ModelName}
 `
 
 // Handler templates
-const handlerTemplate = `package handler
+const handlerTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -279,7 +285,8 @@ func (h *{{.ModelName}}Handler) Delete(c *fiber.Ctx) error {
 `
 
 // DTO templates
-const getDtoTemplate = `package {{.PackageName}}
+const getDtoTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package {{.PackageName}}
 
 import "time"
 
@@ -308,7 +315,8 @@ func (dto *Get{{.ModelName}}Dto) SetDefaults() {
 }
 `
 
-const createDtoTemplate = `package {{.PackageName}}
+const createDtoTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package {{.PackageName}}
 
 type Create{{.ModelName}}Dto struct {
 {{range .Fields}}	{{.Name}} {{.Type}} ` + "`json:\"{{.JsonTag}}\"`" + `
@@ -316,7 +324,8 @@ type Create{{.ModelName}}Dto struct {
 }
 `
 
-const updateDtoTemplate = `package {{.PackageName}}
+const updateDtoTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package {{.PackageName}}
 
 type Update{{.ModelName}}Dto struct {
 {{range .Fields}}	{{.Name}} *{{.Type}} ` + "`json:\"{{.JsonTag}}\"`" + `
@@ -325,7 +334,8 @@ type Update{{.ModelName}}Dto struct {
 `
 
 // Scope templates
-const scopeTemplate = `package {{.PackageName}}
+const scopeTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package {{.PackageName}}
 
 import (
 	"gorm.io/gorm"
@@ -360,7 +370,8 @@ func FilterBy{{.FieldName}}Like({{.ParamName}} string) func(db *gorm.DB) *gorm.D
 `
 
 // Middleware template
-const middlewareTemplate = `package middleware
+const middlewareTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package middleware
 
 import (
 	"{{.ProjectName}}/util"
@@ -382,7 +393,8 @@ func {{.MiddlewareName}}() fiber.Handler {
 `
 
 // Resource route template
-const resourceRouteTemplate = `package route
+const resourceRouteTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package route
 
 import (
 	"{{.ProjectName}}/handler"
@@ -429,6 +441,10 @@ type FieldData struct {
 	ValidateTag string
 }
 
+// toSnakeCase converts CamelCase strings to snake_case format.
+// Inserts underscores before uppercase letters and converts the entire string to lowercase,
+// commonly used for database column names and file naming conventions.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func toSnakeCase(str string) string {
 	var result []rune
 	for i, r := range str {
@@ -440,6 +456,10 @@ func toSnakeCase(str string) string {
 	return strings.ToLower(string(result))
 }
 
+// toCamelCase converts strings to camelCase format by lowercasing the first character.
+// Used for generating variable names and method parameters that follow Go naming conventions,
+// ensuring consistent code style across generated files.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func toCamelCase(str string) string {
 	if len(str) == 0 {
 		return str
@@ -447,6 +467,10 @@ func toCamelCase(str string) string {
 	return strings.ToLower(str[:1]) + str[1:]
 }
 
+// toPlural converts singular nouns to their plural forms using basic English pluralization rules.
+// Handles common cases like 'y' to 'ies', and adds 'es' or 's' as appropriate,
+// used for generating table names and API endpoint paths.
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func toPlural(str string) string {
 	// Simple pluralization - you might want to use a proper library
 	if strings.HasSuffix(str, "y") {

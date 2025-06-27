@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2024-12-19
+
+### Added
+- **Enhanced Branding**: Added signature "🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡" throughout the CLI tool
+- **Professional Attribution**: Integrated creator signature in all generated code templates
+- **Consistent Branding**: Added signature to all CLI command success messages
+- **Visual Enhancements**: Updated all command outputs with modern emojis and styling
+
+### Changed
+- **CLI Interface**: Enhanced root command description with signature and feature list
+- **Success Messages**: Updated all generate command outputs to include branding signature
+- **User Experience**: Improved visual consistency across all CLI interactions
+- **Template Branding**: All generated code now includes professional attribution
+
+### Improved
+- **Brand Recognition**: Consistent "Oakhouse" branding across all tool outputs
+- **Professional Presentation**: Enhanced CLI tool appearance with signature styling
+- **User Engagement**: More engaging and branded command-line experience
+
 ## [1.9.0] - 2024-12-19
 
 ### Added
