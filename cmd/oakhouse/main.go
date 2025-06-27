@@ -18,7 +18,7 @@ var (
 func main() {
 	rootCmd := &cobra.Command{
 		Use:     "oakhouse",
-		Short:   "🚀 Go To Oakhouse - A powerful Go framework for rapid API development",g
+		Short:   "🚀 Go To Oakhouse - A powerful Go framework for rapid API development",
 		Long:    `🚀 Go To Oakhouse is a Go framework for building APIs with clean architecture patterns.
 
 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
