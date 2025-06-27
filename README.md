@@ -16,7 +16,7 @@ A powerful Go framework, designed for rapid API development with clean architect
 
 ## What's New in v1.9.0
 
-- 🎯 **Simplified Database Management** - Replaced complex migration system with single `db-setup` command
+- 🎯 **Simplified Database Management** - Replaced complex migration system with streamlined database connection setup
 - ⚡ **Streamlined Workflow** - No more migration files to manage
 - 🔧 **Improved CLI Stability** - Fixed compilation issues and dependency conflicts
 - 🏗️ **Cleaner Architecture** - Removed migration complexity for better developer experience
@@ -71,8 +71,8 @@ oakhouse add database
 cp .env.example .env
 # Edit .env with your database credentials
 
-# Initialize database and set up tables (v1.9.0+)
-oakhouse db-setup
+# Database connection is now handled automatically when you run:
+# oakhouse add database
 ```
 
 This approach allows you to:
@@ -303,8 +303,8 @@ oakhouse generate middleware <name>
 ### Database Operations
 
 ```bash
-# Initialize database
-oakhouse db-setup
+# Add database support to your project
+oakhouse add database
 ```
 
 ## Testing

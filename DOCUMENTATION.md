@@ -31,8 +31,8 @@
 
 ### What's New in v1.9.0
 
-- **Simplified Database Management**: Replaced complex migration system with a single `db-setup` command
-- **Streamlined Workflow**: No more migration files to manage - just run `oakhouse db-setup` to initialize your database
+- **Simplified Database Management**: Replaced complex migration system with streamlined database connection setup
+- **Streamlined Workflow**: No more migration files to manage - just run `oakhouse add database` to set up database support
 - **Improved CLI Stability**: Fixed compilation issues and dependency conflicts
 - **Cleaner Architecture**: Removed migration complexity for a more straightforward development experience
 
@@ -64,8 +64,8 @@ go mod tidy
 cp .env.example .env
 # Edit .env with your database credentials
 
-# Initialize database
-oakhouse db-setup
+# Add database support
+oakhouse add database
 
 # Start development server
 oakhouse serve
@@ -179,8 +179,8 @@ oakhouse generate middleware RoleCheck
 ### Database Operations
 
 ```bash
-# Initialize database and set up tables
-oakhouse db-setup
+# Add database support to your project
+oakhouse add database
 ```
 
 ## Configuration
@@ -1150,8 +1150,8 @@ oakhouse generate resource Comment content:text post_id:uuid author_id:uuid
 # Post Post `gorm:"foreignKey:PostID"`
 # Author User `gorm:"foreignKey:AuthorID"`
 
-# Initialize database
-oakhouse db-setup
+# Add database support
+oakhouse add database
 
 # Start development server
 oakhouse serve

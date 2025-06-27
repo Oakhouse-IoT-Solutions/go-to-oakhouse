@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.9.0] - 2024-12-19
 
 ### Added
-- **New `db-setup` command**: Simplified database initialization replacing complex migration system
+- **Simplified database setup**: Streamlined database connection setup replacing complex migration system
 - Enhanced database management with single-command setup
 - Improved error handling and user feedback for database operations
 
@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed complex migration CLI commands (`migrate up`, `migrate create`, etc.)
 
 ### Changed
-- **Simplified database workflow**: Projects now use `oakhouse db-setup` for database initialization
+- **Simplified database workflow**: Projects now use `oakhouse add database` for database setup
 - Updated all documentation to reflect new database management approach
 - Modified project templates to use simplified database setup
 

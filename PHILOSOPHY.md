@@ -79,8 +79,8 @@ oakhouse generate model Product
 oakhouse generate handler OrderHandler
 oakhouse generate service PaymentService
 
-# Database operations
-oakhouse db-setup
+# Database setup
+oakhouse add database
 
 # Development server with hot reload
 oakhouse serve

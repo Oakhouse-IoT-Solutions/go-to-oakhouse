@@ -26,7 +26,6 @@ Created by Htet Waiyan From Oakhouse`,
 	rootCmd.AddCommand(generateCmd())
 	rootCmd.AddCommand(addCmd())
 	rootCmd.AddCommand(serveCmd())
-	rootCmd.AddCommand(dbSetupCmd())
 	rootCmd.AddCommand(buildCmd())
 
 	if err := rootCmd.Execute(); err != nil {
@@ -105,7 +104,7 @@ func addDatabaseCmd() *cobra.Command {
 			fmt.Println("✅ Database support added successfully!")
 			fmt.Println("💡 Don't forget to:")
 			fmt.Println("   1. Set database environment variables in .env")
-			fmt.Println("   2. Run 'oakhouse db-setup' to initialize database")
+			fmt.Println("   2. Run 'oakhouse db-setup' to connect database modules")
 		},
 	}
 	return cmd
@@ -304,21 +303,7 @@ func serveCmd() *cobra.Command {
 	return cmd
 }
 
-// dbSetupCmd sets up the database
-func dbSetupCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "db-setup",
-		Short: "Initialize database connection and setup",
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := setupDatabase(); err != nil {
-				fmt.Fprintf(os.Stderr, "Error setting up database: %v\n", err)
-				os.Exit(1)
-			}
-			fmt.Println("✅ Database setup completed successfully!")
-		},
-	}
-	return cmd
-}
+
 
 // buildCmd builds the application for production
 func buildCmd() *cobra.Command {

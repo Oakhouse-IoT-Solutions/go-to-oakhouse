@@ -506,25 +506,3 @@ DB_SSL_MODE=disable
 	fmt.Println("✅ Database support configured!")
 	return nil
 }
-
-// setupDatabase initializes the database
-func setupDatabase() error {
-	fmt.Println("🔧 Setting up database...")
-	
-	// Check if .env file exists
-	if _, err := os.Stat(".env"); os.IsNotExist(err) {
-		return fmt.Errorf(".env file not found. Please copy .env.example to .env and configure your database settings")
-	}
-	
-	// Run go run main.go to initialize database
-	cmd := exec.Command("go", "run", "main.go")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("failed to initialize database: %w", err)
-	}
-	
-	fmt.Println("✅ Database setup completed!")
-	return nil
-}
