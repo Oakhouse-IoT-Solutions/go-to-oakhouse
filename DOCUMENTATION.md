@@ -30,18 +30,18 @@
 - PostgreSQL (recommended) or MySQL
 - Redis (optional, for caching)
 
-### What's New in v1.11.0
+### What's New in v1.12.0
 
-- **Enhanced Branding**: Added signature branding throughout the CLI tool and generated code
-- **Improved User Experience**: Enhanced success messages with consistent branding across all commands
-- **Visual Enhancements**: Updated all command outputs with modern emojis and styling
-- **Consistent Messaging**: Unified branding across all generated templates and CLI interactions
-- **Professional Attribution**: Added "🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡" signature to all outputs
+- **Code Quality Improvements**: Enhanced error handling and code organization throughout the framework
+- **Documentation Updates**: Improved inline documentation and code comments for better developer experience
+- **Performance Optimizations**: Streamlined code generation processes for faster project scaffolding
+- **Developer Experience**: Better CLI feedback and user guidance with improved error messages
+- **Architecture Enhancements**: Refined project structure and template organization for maintainability
 
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.11.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.12.0
 ```
 
 ### Verify Installation

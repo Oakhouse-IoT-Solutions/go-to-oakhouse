@@ -14,19 +14,20 @@ A powerful Go framework, designed for rapid API development with clean architect
 - 🐳 **Docker Ready** - Production-ready containerization
 - 📚 **Comprehensive Documentation** - Detailed guides and examples
 
-## What's New in v1.11.0
+## What's New in v1.12.0
 
-- 🏡 **Enhanced Branding** - Added signature branding throughout the CLI tool and generated code
-- 🚀 **Improved User Experience** - Enhanced success messages with consistent branding
-- ✨ **Visual Enhancements** - Updated all command outputs with modern emojis and styling
-- 🎯 **Consistent Messaging** - Unified branding across all generated templates and CLI interactions
+- 🔧 **Code Quality Improvements** - Enhanced error handling and code organization
+- 📝 **Documentation Updates** - Improved inline documentation and code comments
+- 🚀 **Performance Optimizations** - Streamlined code generation processes
+- 🛠️ **Developer Experience** - Better CLI feedback and user guidance
+- 🏗️ **Architecture Enhancements** - Refined project structure and template organization
 
 ## Quick Start
 
 ### Installation
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.11.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.12.0
 ```
 
 ### Create New Project
