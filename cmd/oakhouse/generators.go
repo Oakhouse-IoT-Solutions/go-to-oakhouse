@@ -52,6 +52,7 @@ func createNewProject(projectName string) error {
 		"docker-compose.yml":       dockerComposeTemplate,
 		"cmd/main.go":              mainGoTemplate,
 		"cmd/app_server.go":        appServerTemplate,
+		"cmd/wire.go":              wireTemplate,
 
 		"config/env_config.go":     envConfigTemplate,
 		"route/v1.go":              routeTemplate,
