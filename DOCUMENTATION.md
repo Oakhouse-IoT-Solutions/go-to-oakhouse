@@ -30,7 +30,7 @@
 - PostgreSQL (recommended) or MySQL
 - Redis (optional, for caching)
 
-### What's New in v1.20.0
+### What's New in v1.21.0
 
 - **Enhanced Architecture**: Improved project structure with comprehensive Wire dependency injection documentation
 - **Route Management**: Added detailed route setup and RESTful API design patterns
@@ -41,7 +41,7 @@
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.20.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.21.0
 ```
 
 ### Verify Installation
