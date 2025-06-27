@@ -30,18 +30,18 @@
 - PostgreSQL (recommended) or MySQL
 - Redis (optional, for caching)
 
-### What's New in v1.18.0
+### What's New in v1.19.0
 
-- **Code Quality Fixes**: Fixed typos and improved code consistency throughout the framework
-- **Documentation Improvements**: Enhanced documentation accuracy and completeness for better user experience
-- **Build Optimizations**: Streamlined build process for better development experience and faster compilation
-- **Developer Experience**: Continued improvements to CLI usability, feedback, and error handling
-- **Project Structure**: Further refinements to project organization and template maintainability
+- **Enhanced Architecture**: Improved project structure with comprehensive Wire dependency injection documentation
+- **Route Management**: Added detailed route setup and RESTful API design patterns
+- **Code Quality**: Enhanced code maintainability with better architectural patterns and examples
+- **Documentation Excellence**: Comprehensive documentation updates covering all framework components
+- **Developer Experience**: Improved CLI tools and enhanced project scaffolding capabilities
 
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.18.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.19.0
 ```
 
 ### Verify Installation
@@ -90,18 +90,23 @@ oakhouse generate resource Post title:string content:text author_id:uuid publish
 
 ## Project Structure
 
+Go To Oakhouse follows a clean architecture pattern with clear separation of concerns. Here's the complete project structure:
+
 ```
 my-blog-api/
 ├── cmd/
-│   └── main.go                 # Application entry point
+│   ├── main.go                 # Application entry point
+│   ├── app_server.go          # Fiber app server setup
+│   ├── wire.go                # Wire dependency injection providers
+│   └── wire_gen.go            # Generated Wire code (auto-generated)
 ├── config/
-│   └── config.go              # Configuration management
+│   └── env_config.go          # Environment configuration management
 ├── entity/
-│   ├── user.go                # User model
-│   └── post.go                # Post model
+│   ├── user.go                # User model/entity
+│   └── post.go                # Post model/entity
 ├── repository/
-│   ├── user_repository.go     # User data access
-│   └── post_repository.go     # Post data access
+│   ├── user_repository.go     # User data access layer
+│   └── post_repository.go     # Post data access layer
 ├── service/
 │   ├── user_service.go        # User business logic
 │   └── post_service.go        # Post business logic
@@ -110,39 +115,106 @@ my-blog-api/
 │   └── post_handler.go        # Post HTTP handlers
 ├── dto/
 │   ├── user/
-│   │   ├── create_user_dto.go
-│   │   ├── update_user_dto.go
-│   │   └── get_user_dto.go
+│   │   ├── create_user_dto.go # User creation request DTO
+│   │   ├── update_user_dto.go # User update request DTO
+│   │   └── get_user_dto.go    # User response DTO
 │   └── post/
-│       ├── create_post_dto.go
-│       ├── update_post_dto.go
-│       └── get_post_dto.go
+│       ├── create_post_dto.go # Post creation request DTO
+│       ├── update_post_dto.go # Post update request DTO
+│       └── get_post_dto.go    # Post response DTO
 ├── scope/
-│   ├── user/
-│   │   └── filter_by_role.go
-│   └── post/
-│       ├── filter_by_author.go
+│   ├── users/
+│   │   └── filter_by_role.go  # User query scopes
+│   └── products/
+│       ├── filter_by_author.go # Post query scopes
 │       └── filter_by_status.go
 ├── middleware/
 │   ├── auth.go                # Authentication middleware
-│   └── rate_limit.go          # Rate limiting
+│   └── rate_limit.go          # Rate limiting middleware
 ├── adapter/
-│   ├── database.go            # Database adapter
+│   ├── database_adapter.go    # Database adapter interface
 │   └── postgres/
-│       └── connection.go      # PostgreSQL connection
+│       └── gorm.go            # PostgreSQL GORM implementation
 ├── route/
-│   └── v1.go                  # API routes
+│   └── v1.go                  # API v1 routes setup
 ├── util/
-│   ├── response.go            # Response utilities
+│   ├── response.go            # HTTP response utilities
 │   └── pagination.go          # Pagination utilities
-
-├── .env.example               # Environment template
-├── .env                       # Environment variables
-├── docker-compose.yml         # Docker services
+├── static/
+│   └── index.html             # Static files (optional)
+├── .env.example               # Environment variables template
+├── .env                       # Environment variables (local)
+├── docker-compose.yml         # Docker services configuration
 ├── Dockerfile                 # Application container
-├── Makefile                   # Build commands
-└── go.mod                     # Go dependencies
+├── Makefile                   # Build and development commands
+└── go.mod                     # Go module dependencies
 ```
+
+### Key Architecture Components
+
+#### **1. Clean Architecture Layers**
+
+- **`cmd/`**: Application entry point and server setup
+  - `main.go`: Bootstrap application with Wire DI
+  - `app_server.go`: Fiber server configuration and middleware setup
+  - `wire.go`: Dependency injection provider declarations
+  - `wire_gen.go`: Auto-generated Wire dependency injection code
+
+- **`config/`**: Configuration management
+  - `env_config.go`: Environment-based configuration loading
+
+- **`entity/`**: Domain models and business entities
+  - Core business objects with validation rules
+  - Database table representations
+
+- **`repository/`**: Data access layer
+  - Database operations and queries
+  - Interface-based design for testability
+  - GORM integration for ORM operations
+
+- **`service/`**: Business logic layer
+  - Core business rules and operations
+  - Orchestrates between repositories and handlers
+  - Transaction management
+
+- **`handler/`**: HTTP presentation layer
+  - REST API endpoints
+  - Request/response handling
+  - Input validation and error handling
+
+#### **2. Data Transfer Objects (DTOs)**
+
+- **`dto/`**: Request and response data structures
+  - `create_*_dto.go`: Input validation for creation
+  - `update_*_dto.go`: Input validation for updates
+  - `get_*_dto.go`: Response formatting
+  - JSON serialization tags and validation rules
+
+#### **3. Query Scopes**
+
+- **`scope/`**: Reusable query filters and conditions
+  - Modular query building
+  - Chainable query operations
+  - Complex filtering logic
+
+#### **4. Infrastructure**
+
+- **`adapter/`**: External service adapters
+  - `database_adapter.go`: Database interface abstraction
+  - `postgres/gorm.go`: PostgreSQL implementation
+
+- **`middleware/`**: HTTP middleware components
+  - Authentication, authorization
+  - Rate limiting, CORS, logging
+
+- **`route/`**: API route definitions
+  - RESTful endpoint mapping
+  - Route grouping and versioning
+
+- **`util/`**: Shared utilities
+  - Response formatting helpers
+  - Pagination utilities
+  - Common helper functions
 
 ## Dependency Injection with Wire
 
@@ -179,9 +251,24 @@ Wire makes your application's dependency relationships crystal clear:
 ```go
 // cmd/wire.go - Your dependency providers are explicitly declared
 var ProviderSet = wire.NewSet(
-    config.Load,           // Configuration provider
-    NewDatabaseAdapter,    // Database connection provider  
-    server.NewAppServer,   // Application server provider
+    // Core Infrastructure
+    config.Load,                    // Configuration provider
+    adapter.NewDatabaseAdapter,     // Database connection provider
+    
+    // Repositories (Data Access Layer)
+    repository.NewUserRepository,   // User data access
+    repository.NewProductRepository, // Product data access
+    
+    // Services (Business Logic Layer)
+    service.NewUserService,         // User business logic
+    service.NewProductService,      // Product business logic
+    
+    // Handlers (Presentation Layer)
+    handler.NewUserHandler,         // User HTTP handlers
+    handler.NewProductHandler,      // Product HTTP handlers
+    
+    // Application Server
+    NewAppServer,                   // Fiber app server
 )
 ```
 
@@ -217,21 +304,27 @@ As your application grows, Wire scales with you:
 ```go
 // Adding new services is straightforward
 var ProviderSet = wire.NewSet(
-    // Core dependencies
+    // Core Infrastructure
     config.Load,
-    NewDatabaseAdapter,
+    adapter.NewDatabaseAdapter,
     
-    // Services
+    // Repositories (Data Access Layer)
+    repository.NewUserRepository,
+    repository.NewPostRepository,
+    repository.NewEmailRepository,  // New repository added easily
+    
+    // Services (Business Logic Layer)
     service.NewUserService,
     service.NewPostService,
-    service.NewEmailService,    // New service added easily
+    service.NewEmailService,        // New service added easily
     
-    // Handlers
+    // Handlers (Presentation Layer)
     handler.NewUserHandler,
     handler.NewPostHandler,
+    handler.NewEmailHandler,        // New handler added easily
     
-    // Application
-    server.NewAppServer,
+    // Application Server
+    NewAppServer,
 )
 ```
 
@@ -1164,6 +1257,161 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
     }
     
     return util.SendSuccess(c, "User created successfully", user)
+}
+```
+
+## Routes
+
+### Route Setup
+
+Go To Oakhouse uses a centralized route configuration that brings together all your handlers into a clean API structure:
+
+```go
+// route/v1.go
+package route
+
+import (
+    "my-blog-api/handler"
+    "my-blog-api/middleware"
+    "github.com/gofiber/fiber/v2"
+)
+
+// SetupV1Routes configures all API v1 routes
+func SetupV1Routes(app *fiber.App, userHandler *handler.UserHandler, productHandler *handler.ProductHandler) {
+    // API v1 group
+    v1 := app.Group("/api/v1")
+    
+    // Apply global middleware
+    v1.Use(middleware.RateLimit(100, time.Minute)) // 100 requests per minute
+    
+    // Public routes
+    auth := v1.Group("/auth")
+    auth.Post("/login", userHandler.Login)
+    auth.Post("/register", userHandler.Register)
+    
+    // Protected routes
+    protected := v1.Group("/")
+    protected.Use(middleware.AuthRequired())
+    
+    // User routes
+    users := protected.Group("/users")
+    users.Get("/", userHandler.ListUsers)                    // GET /api/v1/users
+    users.Get("/profile", userHandler.GetProfile)            // GET /api/v1/users/profile
+    users.Get("/:id", userHandler.GetUser)                   // GET /api/v1/users/:id
+    users.Post("/", userHandler.CreateUser)                  // POST /api/v1/users
+    users.Put("/:id", userHandler.UpdateUser)                // PUT /api/v1/users/:id
+    users.Delete("/:id", userHandler.DeleteUser)             // DELETE /api/v1/users/:id
+    
+    // Admin-only user routes
+    adminUsers := users.Group("/")
+    adminUsers.Use(middleware.RoleRequired("admin"))
+    adminUsers.Patch("/:id/status", userHandler.UpdateUserStatus)
+    
+    // Product routes
+    products := protected.Group("/products")
+    products.Get("/", productHandler.ListProducts)           // GET /api/v1/products
+    products.Get("/:id", productHandler.GetProduct)          // GET /api/v1/products/:id
+    products.Post("/", productHandler.CreateProduct)         // POST /api/v1/products
+    products.Put("/:id", productHandler.UpdateProduct)       // PUT /api/v1/products/:id
+    products.Delete("/:id", productHandler.DeleteProduct)    // DELETE /api/v1/products/:id
+}
+```
+
+### Route Integration in App Server
+
+```go
+// cmd/app_server.go
+package main
+
+import (
+    "my-blog-api/route"
+    "my-blog-api/handler"
+    "github.com/gofiber/fiber/v2"
+    "github.com/gofiber/fiber/v2/middleware/cors"
+    "github.com/gofiber/fiber/v2/middleware/logger"
+)
+
+type AppServer struct {
+    app         *fiber.App
+    userHandler *handler.UserHandler
+    productHandler *handler.ProductHandler
+}
+
+func NewAppServer(
+    userHandler *handler.UserHandler,
+    productHandler *handler.ProductHandler,
+) *AppServer {
+    app := fiber.New(fiber.Config{
+        ErrorHandler: customErrorHandler,
+    })
+    
+    // Global middleware
+    app.Use(logger.New())
+    app.Use(cors.New())
+    
+    // Setup routes
+    route.SetupV1Routes(app, userHandler, productHandler)
+    
+    return &AppServer{
+        app:         app,
+        userHandler: userHandler,
+        productHandler: productHandler,
+    }
+}
+
+func (s *AppServer) Start(port string) error {
+    return s.app.Listen(":" + port)
+}
+```
+
+### Route Patterns and Best Practices
+
+#### **1. RESTful API Design**
+
+```go
+// Standard REST patterns
+GET    /api/v1/users          // List all users
+GET    /api/v1/users/:id      // Get specific user
+POST   /api/v1/users          // Create new user
+PUT    /api/v1/users/:id      // Update entire user
+PATCH  /api/v1/users/:id      // Partial user update
+DELETE /api/v1/users/:id      // Delete user
+```
+
+#### **2. Route Grouping and Middleware**
+
+```go
+// Group related routes
+api := app.Group("/api")
+v1 := api.Group("/v1")
+users := v1.Group("/users")
+
+// Apply middleware to groups
+protected := v1.Group("/")
+protected.Use(middleware.AuthRequired())
+
+admin := protected.Group("/admin")
+admin.Use(middleware.RoleRequired("admin"))
+```
+
+#### **3. Route Parameters and Validation**
+
+```go
+// Handler with parameter validation
+func (h *UserHandler) GetUser(c *fiber.Ctx) error {
+    id := c.Params("id")
+    
+    // Validate UUID format
+    if _, err := uuid.Parse(id); err != nil {
+        return util.ErrorResponse(c, fiber.StatusBadRequest, "Invalid user ID format", err)
+    }
+    
+    user, err := h.service.GetUser(id)
+    if err != nil {
+        return util.ErrorResponse(c, fiber.StatusNotFound, "User not found", err)
+    }
+    
+    return util.SuccessResponse(c, "User retrieved successfully", user)
 }
 ```
 

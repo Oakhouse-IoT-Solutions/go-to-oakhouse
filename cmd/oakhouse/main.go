@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	version = "1.18.0"
+	version = "1.19.0"
 )
 
 // main initializes and executes the Oakhouse CLI application with all available commands.

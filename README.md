@@ -14,20 +14,20 @@ A powerful Go framework, designed for rapid API development with clean architect
 - 🐳 **Docker Ready** - Production-ready containerization
 - 📚 **Comprehensive Documentation** - Detailed guides and examples
 
-## What's New in v1.18.0
+## What's New in v1.19.0
 
-- 🔧 **Code Quality Fixes** - Fixed typos and improved code consistency throughout the framework
-- 📝 **Documentation Improvements** - Enhanced documentation accuracy and completeness
-- 🚀 **Build Optimizations** - Streamlined build process for better development experience
-- 🛠️ **Developer Experience** - Continued improvements to CLI usability and feedback
-- 🏗️ **Project Structure** - Further refinements to project organization and maintainability
+- 🏗️ **Enhanced Architecture** - Improved project structure with comprehensive Wire dependency injection documentation
+- 🛣️ **Route Management** - Added detailed route setup and RESTful API design patterns
+- 🔧 **Code Quality** - Enhanced code maintainability with better architectural patterns and examples
+- 📚 **Documentation Excellence** - Comprehensive documentation updates covering all framework components
+- 🛠️ **Developer Experience** - Improved CLI tools and enhanced project scaffolding capabilities
 
 ## Quick Start
 
 ### Installation
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.18.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.19.0
 ```
 
 ### Create New Project
