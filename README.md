@@ -14,7 +14,7 @@ A powerful Go framework, designed for rapid API development with clean architect
 - 🐳 **Docker Ready** - Production-ready containerization
 - 📚 **Comprehensive Documentation** - Detailed guides and examples
 
-## What's New in v1.21.0
+## What's New in v1.22.0
 
 - 🏗️ **Enhanced Architecture** - Improved project structure with comprehensive Wire dependency injection documentation
 - 🛣️ **Route Management** - Added detailed route setup and RESTful API design patterns
@@ -27,7 +27,7 @@ A powerful Go framework, designed for rapid API development with clean architect
 ### Installation
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.21.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.22.0
 ```
 
 ### Create New Project
