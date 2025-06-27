@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	version = "1.14.0"
+	version = "1.16.0"
 )
 
 // main initializes and executes the Oakhouse CLI application with all available commands.
@@ -28,7 +28,7 @@ Features:
 • Rapid API development
 • Auto-generated CRUD operations
 • Built-in authentication middleware
-• Database migrations support
+• Database support
 • Docker containerization`,
 		Version: version,
 	}

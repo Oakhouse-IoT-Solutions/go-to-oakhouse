@@ -30,7 +30,7 @@
 - PostgreSQL (recommended) or MySQL
 - Redis (optional, for caching)
 
-### What's New in v1.14.0
+### What's New in v1.16.0
 
 - **Code Quality Fixes**: Fixed typos and improved code consistency throughout the framework
 - **Documentation Improvements**: Enhanced documentation accuracy and completeness for better user experience
@@ -41,7 +41,7 @@
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.14.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.16.0
 ```
 
 ### Verify Installation
