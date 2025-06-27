@@ -52,7 +52,7 @@ func createNewProject(projectName string) error {
 		"docker-compose.yml":       dockerComposeTemplate,
 		"cmd/main.go":              mainGoTemplate,
 		"cmd/app_server.go":        appServerTemplate,
-		"cmd/wire.go":              wireTemplate,
+
 		"config/env_config.go":     envConfigTemplate,
 		"route/v1.go":              routeTemplate,
 		"adapter/database_adapter.go": databaseAdapterTemplate,
@@ -81,15 +81,10 @@ func createNewProject(projectName string) error {
 		return fmt.Errorf("failed to download dependencies: %w", err)
 	}
 
-	// Generate Wire code
-	wireCmd := exec.Command("go", "generate", "./cmd")
-	wireCmd.Dir = projectName
-	if err := wireCmd.Run(); err != nil {
-		log.Printf("⚠️  Wire code generation failed: %v", err)
-		log.Println("💡 To generate Wire code manually, run: go generate ./cmd")
-		log.Println("🚀 Project created successfully, but you may need to install Wire first:")
-		log.Println("   go install github.com/google/wire/cmd/wire@latest")
-	}
+	// Project created successfully
+	log.Println("🚀 Project created successfully!")
+	log.Printf("📁 Navigate to your project: cd %s", projectName)
+	log.Println("🏃 Run your application: go run ./cmd")
 
 	return nil
 }

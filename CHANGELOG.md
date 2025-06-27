@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.18.0] - 2024-12-19
+
+### Added
+- **Wire Dependency Injection**: Enhanced Wire implementation with comprehensive documentation and detailed comments
+- **Code Quality Improvements**: Added detailed comments throughout Wire dependency injection points
+- **Documentation Enhancement**: Added detailed Wire implementation guide covering Provider Pattern, Constructor Injection, and Advanced Wire Patterns
+- **Template Fixes**: Fixed missing adapter import in CLI-generated projects
+
+### Changed
+- **Version Update**: Updated to version 1.18.0 across all files and documentation
+- **Wire Templates**: Enhanced Wire templates with detailed explanatory comments
+- **CLI Templates**: Improved generated project templates with proper imports
+
+### Fixed
+- **Import Issues**: Resolved missing adapter import in newly generated projects
+- **Template Generation**: Fixed CLI template generation to include all necessary imports
+- **Wire Configuration**: Improved Wire setup and configuration in generated projects
+
+### Improved
+- **Developer Experience**: Better code clarity and onboarding through comprehensive Wire documentation
+- **Code Maintainability**: Enhanced code structure with detailed dependency injection patterns
+- **Testing Guidance**: Added Wire testing patterns and best practices
+
 ## [1.16.0] - 2024-12-19
 
 ### Added

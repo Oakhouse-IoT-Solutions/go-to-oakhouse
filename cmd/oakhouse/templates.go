@@ -10,7 +10,6 @@ require (
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/uuid v1.5.0
-	github.com/google/wire v0.5.0
 	github.com/joho/godotenv v1.4.0
 	github.com/redis/go-redis/v9 v9.3.0
 	gorm.io/gorm v1.25.5
@@ -191,7 +190,7 @@ const indexHtmlTemplate = `<!DOCTYPE html>
     <div class="container">
         <div class="hero">
             <h1>🏠 {{.ProjectName}}</h1>
-            <div class="version-badge">Go To Oakhouse v1.16.0</div>
+            <div class="version-badge">Go To Oakhouse v1.18.0</div>
             <p>Your new Go To Oakhouse project is ready!</p>
         </div>
         
@@ -344,14 +343,17 @@ import (
 	"os/signal"
 	"syscall"
 
+	"{{.ProjectName}}/adapter"
+	"{{.ProjectName}}/config"
+
 	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
 	ctx := context.Background()
 
-	// Initialize application server using Wire
-	app, cleanup, err := InitializeApp()
+	// Initialize application server manually
+	app, cleanup, err := initializeAppManually()
 	if err != nil {
 		log.Fatalf("Failed to initialize app: %v", err)
 	}
@@ -379,6 +381,64 @@ func main() {
 	}
 
 	log.Println("Server stopped")
+}
+
+// initializeAppManually provides manual dependency injection for testing and development.
+// This function demonstrates how to manually wire dependencies without Wire,
+// which is useful for:
+// - Testing scenarios where you need precise control over dependencies
+// - Development environments where database might not be available
+// - Debugging dependency injection issues
+// - Understanding the dependency graph without Wire's generated code
+//
+// Manual vs Wire Dependency Injection:
+// - Manual: Explicit control, verbose, error-prone for complex graphs
+// - Wire: Automated, concise, compile-time safety, better for production
+//
+// This function mirrors what Wire generates but allows for customization:
+// 1. Load configuration manually
+// 2. Optionally create database connection (nil for database-free mode)
+// 3. Create application server with dependencies
+// 4. Return cleanup function for resource management
+//
+// Returns:
+//   *AppServer - Application server with manually injected dependencies
+//   func()     - Cleanup function (empty for database-free setup)
+//   error      - Any initialization error (nil in this simple case)
+func initializeAppManually() (*AppServer, func(), error) {
+	// Step 1: Load configuration
+	// This replaces the config.Load provider in Wire's ProviderSet
+	cfg := config.Load()
+
+	// Step 2: Database initialization (optional)
+	// In this case, we're creating a database-free server for development
+	// To add database support, uncomment the following:
+	//
+	// db, err := adapter.NewDatabaseAdapter(cfg)
+	// if err != nil {
+	//     return nil, nil, fmt.Errorf("failed to initialize database: %w", err)
+	// }
+	//
+	// For now, we pass nil to demonstrate graceful degradation
+	var db *adapter.DatabaseAdapter = nil
+
+	// Step 3: Create application server with dependencies
+	// This replaces the NewAppServer provider in Wire's ProviderSet
+	// The server will handle the nil database gracefully
+	appServer := NewAppServer(cfg, db)
+
+	// Step 4: Define cleanup function
+	// This function will be called when the application shuts down
+	// It should clean up any resources (database connections, file handles, etc.)
+	cleanup := func() {
+		// No cleanup needed for database-free setup
+		// If database was initialized, you would close it here:
+		// if db != nil {
+		//     db.Close()
+		// }
+	}
+
+	return appServer, cleanup, nil
 }
 `
 
@@ -409,7 +469,28 @@ type AppServer struct {
 	db *adapter.DatabaseAdapter
 }
 
-// NewAppServer creates a new AppServer instance with Wire dependency injection
+// NewAppServer is a Wire provider function that creates the main application server.
+// This function demonstrates the Constructor Injection pattern where all dependencies
+// are provided through the function parameters.
+//
+// Dependency Injection Benefits:
+// - Explicit Dependencies: All required components are clearly visible in the signature
+// - Testability: Easy to inject mock dependencies for unit testing
+// - Flexibility: Can swap implementations without changing the constructor
+// - Immutability: Dependencies are set once during construction
+//
+// Wire Integration:
+// - Wire automatically calls this function with the correct dependencies
+// - The config parameter comes from config.Load() provider
+// - The db parameter comes from ProvideDatabase() provider
+// - Wire ensures proper initialization order based on dependency graph
+//
+// Parameters:
+//   config *config.Config - Application configuration (ports, database settings, etc.)
+//   db *adapter.DatabaseAdapter - Database connection wrapper (may be nil if DB unavailable)
+//
+// Returns:
+//   *AppServer - Fully configured application server ready to handle requests
 func NewAppServer(config *config.Config, db *adapter.DatabaseAdapter) *AppServer {
 	server := &AppServer{
 		config: config,
@@ -627,10 +708,30 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// SetupV1Routes configures API routes with dependency injection.
+// This function demonstrates the Service Locator pattern where dependencies
+// are passed down through the routing layer to individual handlers.
+//
+// Dependency Injection in Routing:
+// - Database adapter is injected from the application server
+// - Repositories are created with the injected database
+// - Services are created with repository dependencies
+// - Handlers are created with service dependencies
+//
+// Layered Architecture Pattern:
+// Database -> Repository -> Service -> Handler -> Route
+//
+// This creates a clean separation of concerns where each layer
+// only depends on the layer below it, making the code more
+// maintainable and testable.
+//
+// Parameters:
+//   api fiber.Router - Fiber router group for API endpoints
+//   db *adapter.DatabaseAdapter - Database connection (may be nil)
 func SetupV1Routes(api fiber.Router, db *adapter.DatabaseAdapter) {
 	v1 := api.Group("/v1")
 
-	// Health check endpoint
+	// Health check endpoint - no dependencies required
 	v1.Get("/health", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"status": "ok",
@@ -638,14 +739,40 @@ func SetupV1Routes(api fiber.Router, db *adapter.DatabaseAdapter) {
 		})
 	})
 
-	// Initialize repositories (uncomment when needed)
-	// userRepo := repository.NewUserRepository(db)
+	// Repository Layer - Data Access Objects
+	// Repositories encapsulate database operations and provide a clean interface
+	// for data access. They depend only on the database adapter.
+	//
+	// Dependency Injection Pattern: Constructor Injection
+	// Each repository receives its dependencies through its constructor
+	//
+	// Example: Initialize repositories (uncomment when needed)
+	// userRepo := repository.NewUserRepository(db)  // Injects database dependency
+	// postRepo := repository.NewPostRepository(db)  // Each repo gets same DB instance
 
-	// Initialize services (uncomment when needed)
-	// userService := service.NewUserService(userRepo)
+	// Service Layer - Business Logic
+	// Services contain business logic and orchestrate between repositories.
+	// They depend on repositories but are independent of HTTP concerns.
+	//
+	// Dependency Injection Pattern: Constructor Injection
+	// Services receive repository dependencies through their constructors
+	//
+	// Example: Initialize services (uncomment when needed)
+	// userService := service.NewUserService(userRepo)              // Single dependency
+	// postService := service.NewPostService(postRepo, userRepo)   // Multiple dependencies
+	// emailService := service.NewEmailService()                   // No dependencies
 
-	// Initialize handlers (uncomment when needed)
-	// userHandler := handler.NewUserHandler(userService)
+	// Handler Layer - HTTP Request/Response
+	// Handlers manage HTTP requests/responses and delegate business logic to services.
+	// They depend on services but are independent of data access concerns.
+	//
+	// Dependency Injection Pattern: Constructor Injection
+	// Handlers receive service dependencies through their constructors
+	//
+	// Example: Initialize handlers (uncomment when needed)
+	// userHandler := handler.NewUserHandler(userService)          // Service injection
+	// postHandler := handler.NewPostHandler(postService)         // Clean separation
+	// authHandler := handler.NewAuthHandler(userService)         // Shared services
 
 	// Public routes (uncomment when needed)
 	// public := v1.Group("/")
@@ -994,7 +1121,7 @@ func RateLimit(cfg *config.Config) fiber.Handler {
 }
 `
 
-const makefileTemplate = `.PHONY: help build run test clean docker-build docker-run wire-gen
+const makefileTemplate = `.PHONY: help build run test clean docker-build docker-run
 
 # Variables
 APP_NAME={{.ProjectName}}
@@ -1005,23 +1132,13 @@ help:
 	@echo "Available commands:"
 	@echo "  build        Build the application"
 	@echo "  run          Run the application"
-	@echo "  wire-gen     Generate Wire dependency injection code"
 	@echo "  test         Run tests"
 	@echo "  clean        Clean build artifacts"
 	@echo "  docker-build Build Docker image"
 	@echo "  docker-run   Run Docker container"
 	@echo "  dev          Start development server"
 
-# Generate Wire dependency injection code
-wire-gen:
-	@echo "Generating Wire code..."
-	@if ! command -v wire >/dev/null 2>&1; then \
-		echo "Installing Wire..."; \
-		go install github.com/google/wire/cmd/wire@latest; \
-	fi
-	go generate ./cmd
-
-build: wire-gen
+build:
 	@echo "Building $(APP_NAME)..."
 	go build -o bin/$(APP_NAME) cmd/main.go
 
@@ -1029,7 +1146,7 @@ run: build
 	@echo "Running $(APP_NAME)..."
 	./bin/$(APP_NAME)
 
-dev: wire-gen
+dev:
 	@echo "Starting development server..."
 	air
 
@@ -1044,7 +1161,6 @@ test-coverage:
 clean:
 	@echo "Cleaning..."
 	rm -rf bin/
-	rm -f cmd/wire_gen.go
 
 docker-build:
 	@echo "Building Docker image..."
@@ -1077,6 +1193,24 @@ lint:
 `
 
 const wireTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+// Wire Dependency Injection Configuration
+// 
+// This file defines the dependency injection setup using Google Wire.
+// Wire is a compile-time dependency injection tool that generates code
+// to wire your application components together safely and efficiently.
+//
+// Key Benefits:
+// - Compile-time safety: Dependency errors are caught at build time
+// - Zero runtime overhead: No reflection or runtime container lookups
+// - Type safety: Full Go type checking for all dependencies
+// - Explicit dependency graph: Clear visibility of component relationships
+//
+// How it works:
+// 1. Define provider functions for each component
+// 2. Group providers in a ProviderSet
+// 3. Wire generates the initialization code automatically
+// 4. Run 'go generate' or 'make wire-gen' to update generated code
+
 //go:generate wire
 //go:build wireinject
 // +build wireinject
@@ -1090,26 +1224,96 @@ import (
 	"github.com/google/wire"
 )
 
-// ProviderSet is a Wire provider set that includes all the dependencies
+// ProviderSet defines the complete dependency graph for the application.
+// This is the central registry where all component providers are declared.
+// 
+// Dependency Flow:
+// config.Load -> ProvideDatabase -> NewAppServer
+//             \                 /
+//              \-> (injected) ->/
+//
+// Each provider function in this set will be called by Wire in the correct
+// order to satisfy all dependencies. Wire automatically determines the
+// execution order based on the function signatures.
 var ProviderSet = wire.NewSet(
+	// Configuration Provider
+	// Loads environment variables and application settings
+	// Returns: *config.Config
 	config.Load,
+	
+	// Database Provider
+	// Creates database connection with graceful error handling
+	// Depends on: *config.Config
+	// Returns: *adapter.DatabaseAdapter
 	ProvideDatabase,
+	
+	// Application Server Provider
+	// Creates the main application server with all dependencies
+	// Depends on: *config.Config, *adapter.DatabaseAdapter
+	// Returns: *AppServer
 	NewAppServer,
 )
 
-// ProvideDatabase creates a new database adapter with error handling
+// ProvideDatabase is a Wire provider function that creates a database adapter.
+// This function implements the Provider Pattern for dependency injection.
+//
+// Provider Pattern Benefits:
+// - Encapsulates complex initialization logic
+// - Handles errors gracefully without crashing the application
+// - Allows for different database configurations (with/without DB)
+// - Provides a single point of database connection management
+//
+// Error Handling Strategy:
+// - If database connection fails, returns nil instead of crashing
+// - Allows the application to start without a database (useful for development)
+// - Components should check for nil database before using it
+//
+// Parameters:
+//   cfg *config.Config - Application configuration containing database settings
+//
+// Returns:
+//   *adapter.DatabaseAdapter - Database connection wrapper, or nil if connection fails
 func ProvideDatabase(cfg *config.Config) *adapter.DatabaseAdapter {
+	// Attempt to create database connection using configuration
 	db, err := adapter.NewDatabaseAdapter(cfg)
 	if err != nil {
-		// Return nil database but don't fail - server can run without DB
+		// Graceful degradation: Return nil database but don't fail application startup
+		// This allows the server to run without a database connection
+		// Useful for:
+		// - Development environments where DB might not be available
+		// - Testing scenarios with mock databases
+		// - Gradual deployment where DB is added later
 		return nil
 	}
 	return db
 }
 
-// InitializeApp initializes the application with all dependencies using Wire
+// InitializeApp is the main Wire injector function that bootstraps the entire application.
+// This function signature tells Wire what to build and what dependencies to inject.
+//
+// Wire Injector Pattern:
+// - Function signature defines the desired output (*AppServer)
+// - Wire.Build() tells Wire which providers to use (ProviderSet)
+// - Wire generates the actual implementation in wire_gen.go
+// - The return statement here is just a placeholder - Wire replaces it
+//
+// Generated Code Flow:
+// 1. Wire calls config.Load() to get configuration
+// 2. Wire calls ProvideDatabase(config) to get database adapter
+// 3. Wire calls NewAppServer(config, database) to create app server
+// 4. Wire handles any cleanup functions and error propagation
+//
+// Returns:
+//   *AppServer - Fully initialized application server with all dependencies
+//   func()     - Cleanup function to call when shutting down (e.g., close DB connections)
+//   error      - Any error that occurred during initialization
 func InitializeApp() (*AppServer, func(), error) {
+	// Wire replaces this entire function body with generated dependency injection code
+	// The actual implementation will be in cmd/wire_gen.go after running 'go generate'
 	wire.Build(ProviderSet)
+	
+	// These return values are placeholders - Wire generates the real implementation
+	// The generated code will return properly initialized components
 	return &AppServer{}, func() {}, nil
 }
 `

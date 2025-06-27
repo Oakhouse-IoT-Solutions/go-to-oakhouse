@@ -30,7 +30,7 @@
 - PostgreSQL (recommended) or MySQL
 - Redis (optional, for caching)
 
-### What's New in v1.16.0
+### What's New in v1.18.0
 
 - **Code Quality Fixes**: Fixed typos and improved code consistency throughout the framework
 - **Documentation Improvements**: Enhanced documentation accuracy and completeness for better user experience
@@ -41,7 +41,7 @@
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.16.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.18.0
 ```
 
 ### Verify Installation
@@ -347,6 +347,271 @@ func InitializeApp() (*server.AppServer, func(), error) {
 | Manual DI | ✅ Zero | ✅ Full | ✅ Yes | ✅ Low |
 | Runtime DI | ❌ High | ❌ Limited | ❌ No | ❌ High |
 | Service Locator | 🟡 Medium | ❌ Limited | ❌ No | 🟡 Medium |
+
+### Detailed Wire Implementation Guide
+
+#### **Understanding Wire's Dependency Injection Patterns**
+
+Go To Oakhouse implements several key dependency injection patterns using Wire:
+
+##### **1. Provider Pattern**
+
+Provider functions are the building blocks of Wire dependency injection. Each provider is responsible for creating and configuring a specific component:
+
+```go
+// Configuration Provider - No dependencies
+func Load() *Config {
+    return &Config{
+        AppPort:    getEnv("APP_PORT", "8080"),
+        DatabaseURL: getEnv("DATABASE_URL", ""),
+        // ... other config
+    }
+}
+
+// Database Provider - Depends on Config
+func ProvideDatabase(cfg *Config) *adapter.DatabaseAdapter {
+    db, err := adapter.NewDatabaseAdapter(cfg)
+    if err != nil {
+        // Graceful degradation: return nil instead of crashing
+        return nil
+    }
+    return db
+}
+
+// Application Server Provider - Depends on Config and Database
+func NewAppServer(config *Config, db *adapter.DatabaseAdapter) *AppServer {
+    return &AppServer{
+        Config: config,
+        DB:     db,
+        App:    fiber.New(),
+    }
+}
+```
+
+**Provider Pattern Benefits:**
+- **Single Responsibility**: Each provider handles one component
+- **Error Handling**: Centralized error handling for component initialization
+- **Testability**: Easy to mock individual providers
+- **Reusability**: Providers can be reused across different configurations
+
+##### **2. Constructor Injection Pattern**
+
+All dependencies are provided through function parameters, making them explicit and testable:
+
+```go
+// Handler with explicit service dependencies
+func NewUserHandler(userService *service.UserService, authService *service.AuthService) *UserHandler {
+    return &UserHandler{
+        userService: userService,
+        authService: authService,
+    }
+}
+
+// Service with explicit repository dependencies
+func NewUserService(userRepo *repository.UserRepository, emailRepo *repository.EmailRepository) *UserService {
+    return &UserService{
+        userRepo:  userRepo,
+        emailRepo: emailRepo,
+    }
+}
+```
+
+**Constructor Injection Benefits:**
+- **Explicit Dependencies**: All dependencies are visible in the function signature
+- **Immutable Dependencies**: Dependencies are set once during construction
+- **Test-Friendly**: Easy to inject mock dependencies for testing
+- **Compile-Time Safety**: Missing dependencies cause compilation errors
+
+##### **3. Layered Architecture with Dependency Flow**
+
+Go To Oakhouse follows a clean layered architecture where dependencies flow in one direction:
+
+```
+┌─────────────────┐
+│   HTTP Layer    │ ← Handlers (depend on Services)
+├─────────────────┤
+│  Business Layer │ ← Services (depend on Repositories)
+├─────────────────┤
+│   Data Layer    │ ← Repositories (depend on Database)
+├─────────────────┤
+│ Infrastructure  │ ← Database, Config, External APIs
+└─────────────────┘
+```
+
+**Dependency Flow Rules:**
+- **Downward Dependencies**: Each layer only depends on layers below it
+- **No Circular Dependencies**: Wire prevents circular dependency issues
+- **Interface Segregation**: Each layer exposes only what the layer above needs
+- **Dependency Inversion**: Higher layers depend on abstractions, not concretions
+
+#### **Wire Code Generation Process**
+
+##### **1. Wire Configuration (`cmd/wire.go`)**
+
+```go
+//go:generate wire
+//go:build wireinject
+// +build wireinject
+
+package main
+
+import (
+    "github.com/google/wire"
+    "your-project/config"
+    "your-project/adapter"
+)
+
+// ProviderSet defines the complete dependency graph
+// Each provider function is called in the correct order
+// based on their dependencies
+var ProviderSet = wire.NewSet(
+    config.Load,        // Configuration provider (no dependencies)
+    ProvideDatabase,    // Database provider (depends on config)
+    NewAppServer,       // Application server provider (depends on config + db)
+)
+
+// InitializeApp tells Wire what to build
+func InitializeApp() (*AppServer, func(), error) {
+    wire.Build(ProviderSet)
+    return nil, nil, nil  // Wire replaces this implementation
+}
+```
+
+##### **2. Generated Code (`cmd/wire_gen.go`)**
+
+Wire generates the actual dependency injection code:
+
+```go
+// Code generated by Wire. DO NOT EDIT.
+
+func InitializeApp() (*AppServer, func(), error) {
+    config := config.Load()                    // Step 1: Load config
+    databaseAdapter := ProvideDatabase(config) // Step 2: Create database
+    appServer := NewAppServer(config, databaseAdapter) // Step 3: Create server
+    
+    cleanup := func() {
+        // Wire handles cleanup if providers return cleanup functions
+    }
+    
+    return appServer, cleanup, nil
+}
+```
+
+##### **3. Code Generation Commands**
+
+```bash
+# Generate Wire code
+go generate ./cmd
+
+# Or use the Makefile
+make wire-gen
+
+# Install Wire if not available
+go install github.com/google/wire/cmd/wire@latest
+```
+
+#### **Advanced Wire Patterns in Go To Oakhouse**
+
+##### **1. Conditional Providers with Graceful Degradation**
+
+```go
+// Database provider with graceful degradation
+func ProvideDatabase(cfg *Config) *adapter.DatabaseAdapter {
+    if cfg.DatabaseURL == "" {
+        // Return nil for database-free mode
+        log.Println("Running in database-free mode")
+        return nil
+    }
+    
+    db, err := adapter.NewDatabaseAdapter(cfg)
+    if err != nil {
+        log.Printf("Database connection failed: %v", err)
+        return nil  // Graceful degradation
+    }
+    return db
+}
+
+// Service that handles nil database gracefully
+func NewUserService(db *adapter.DatabaseAdapter) *UserService {
+    return &UserService{
+        db:     db,
+        useDB:  db != nil,  // Flag for database availability
+    }
+}
+```
+
+##### **2. Provider Sets for Modularity**
+
+```go
+// Core infrastructure providers
+var InfrastructureSet = wire.NewSet(
+    config.Load,
+    ProvideDatabase,
+    ProvideRedis,
+)
+
+// Repository layer providers
+var RepositorySet = wire.NewSet(
+    repository.NewUserRepository,
+    repository.NewPostRepository,
+    repository.NewEmailRepository,
+)
+
+// Service layer providers
+var ServiceSet = wire.NewSet(
+    service.NewUserService,
+    service.NewPostService,
+    service.NewEmailService,
+)
+
+// Handler layer providers
+var HandlerSet = wire.NewSet(
+    handler.NewUserHandler,
+    handler.NewPostHandler,
+    handler.NewAuthHandler,
+)
+
+// Complete application provider set
+var ProviderSet = wire.NewSet(
+    InfrastructureSet,
+    RepositorySet,
+    ServiceSet,
+    HandlerSet,
+    NewAppServer,
+)
+```
+
+##### **3. Testing with Wire**
+
+```go
+// test/wire.go - Test-specific provider set
+//go:build wireinject
+// +build wireinject
+
+// Test provider set with mocks
+var TestProviderSet = wire.NewSet(
+    config.LoadTest,        // Test configuration
+    ProvideMockDatabase,    // Mock database
+    NewAppServer,           // Real app server
+)
+
+func InitializeTestApp() (*AppServer, func(), error) {
+    wire.Build(TestProviderSet)
+    return nil, nil, nil
+}
+
+// Manual dependency injection for unit tests
+func setupTestApp() *AppServer {
+    cfg := &config.Config{
+        AppPort: "8080",
+        // ... test config
+    }
+    
+    mockDB := &MockDatabaseAdapter{}
+    
+    return NewAppServer(cfg, mockDB)
+}
+```
 
 ### Best Practices with Wire
 
