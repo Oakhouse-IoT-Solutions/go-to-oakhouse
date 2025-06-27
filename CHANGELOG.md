@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.0] - 2024-12-19
+
+### Added
+- **Code Quality Fixes**: Fixed typos and improved code consistency throughout the framework
+- **Documentation Improvements**: Enhanced documentation accuracy and completeness for better user experience
+- **Build Optimizations**: Streamlined build process for better development experience and faster compilation
+- **Developer Experience**: Continued improvements to CLI usability, feedback, and error handling
+
+### Changed
+- **Project Structure**: Further refinements to project organization and template maintainability
+- **Documentation Structure**: Updated all documentation files to reflect version 1.14.0
+- **Installation Instructions**: Updated installation commands across all documentation
+
+### Fixed
+- **Typo Corrections**: Fixed various typos in code comments and descriptions
+- **Code Consistency**: Improved consistency in code formatting and structure
+
+### Improved
+- **Build Process**: Optimized build workflow for faster compilation and deployment
+- **Documentation Quality**: Enhanced accuracy and completeness of all documentation
+- **Developer Tools**: Better CLI experience with improved feedback and error handling
+
 ## [1.13.0] - 2024-12-19
 
 ### Added

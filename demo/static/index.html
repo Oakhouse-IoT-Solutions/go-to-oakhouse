@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>demo - Go To Oakhouse Project</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .hero {
+            text-align: center;
+            color: white;
+            padding: 4rem 0;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-bottom: 2rem;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .feature-card {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .feature-card p {
+            opacity: 0.9;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,107,107,0.4);
+        }
+        
+        .author-section {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .author-section h2 {
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .author-info {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .code-block {
+            background: rgba(0,0,0,0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+            color: #fff;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>🏠 demo</h1>
+            <div class="version-badge">Go To Oakhouse v1.5.0</div>
+            <p>Your new Go To Oakhouse project is ready!</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature-card">
+                <h3>🚀 API Endpoints</h3>
+                <p>Access your API at <strong>/api/v1</strong>. Generate new resources with the CLI tool.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🏗️ Clean Architecture</h3>
+                <p>Repository, Service, Handler pattern with dependency injection for maintainable code.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🔧 Code Generation</h3>
+                <p>Generate models, handlers, services, repositories, and routes with a single command.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🌐 High Performance</h3>
+                <p>Built on top of Go Fiber framework for lightning-fast HTTP performance.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🗄️ GORM Integration</h3>
+                <p>Advanced ORM with scoping support and database management.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🎯 Health Check</h3>
+                <p>Monitor your application health at <strong>/health</strong> endpoint.</p>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <h2 style="color: white; margin-bottom: 1rem;">Next Steps</h2>
+            <div class="code-block">
+                # Generate a new resource\n                oakhouse generate resource User name:string email:string\n\n                # Start development server\n                oakhouse serve
+            </div>
+            <a href="https://github.com/Oakhouse-Technology/go-to-oakhouse" class="cta-button">View Documentation</a>
+        </div>
+        
+        <div class="author-section">
+            <h2>👨‍💻 Created with Go To Oakhouse</h2>
+            <div class="author-info">
+                <strong>Framework by Htet Waiyan</strong><br>
+                <em>From Oakhouse Technology</em><br><br>
+                <p>Go To Oakhouse makes Go development faster and more enjoyable with clean, maintainable code patterns.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
