@@ -190,7 +190,7 @@ const indexHtmlTemplate = `<!DOCTYPE html>
     <div class="container">
         <div class="hero">
             <h1>🏠 {{.ProjectName}}</h1>
-            <div class="version-badge">Go To Oakhouse v1.22.0</div>
+            <div class="version-badge">Go To Oakhouse v1.23.0</div>
             <p>Your new Go To Oakhouse project is ready!</p>
         </div>
         
@@ -739,53 +739,9 @@ func SetupV1Routes(api fiber.Router, db *adapter.DatabaseAdapter) {
 		})
 	})
 
-	// Repository Layer - Data Access Objects
-	// Repositories encapsulate database operations and provide a clean interface
-	// for data access. They depend only on the database adapter.
-	//
-	// Dependency Injection Pattern: Constructor Injection
-	// Each repository receives its dependencies through its constructor
-	//
-	// Example: Initialize repositories (uncomment when needed)
-	// userRepo := repository.NewUserRepository(db)  // Injects database dependency
-	// postRepo := repository.NewPostRepository(db)  // Each repo gets same DB instance
+	// Setup resource routes
 
-	// Service Layer - Business Logic
-	// Services contain business logic and orchestrate between repositories.
-	// They depend on repositories but are independent of HTTP concerns.
-	//
-	// Dependency Injection Pattern: Constructor Injection
-	// Services receive repository dependencies through their constructors
-	//
-	// Example: Initialize services (uncomment when needed)
-	// userService := service.NewUserService(userRepo)              // Single dependency
-	// postService := service.NewPostService(postRepo, userRepo)   // Multiple dependencies
-	// emailService := service.NewEmailService()                   // No dependencies
-
-	// Handler Layer - HTTP Request/Response
-	// Handlers manage HTTP requests/responses and delegate business logic to services.
-	// They depend on services but are independent of data access concerns.
-	//
-	// Dependency Injection Pattern: Constructor Injection
-	// Handlers receive service dependencies through their constructors
-	//
-	// Example: Initialize handlers (uncomment when needed)
-	// userHandler := handler.NewUserHandler(userService)          // Service injection
-	// postHandler := handler.NewPostHandler(postService)         // Clean separation
-	// authHandler := handler.NewAuthHandler(userService)         // Shared services
-
-	// Public routes (uncomment when needed)
-	// public := v1.Group("/")
-	// public.Post("/auth/login", authHandler.Login)
-	// public.Post("/auth/register", authHandler.Register)
-
-	// Protected routes (uncomment when needed)
-	// protected := v1.Group("/", middleware.AuthRequired())
-	// protected.Get("/users", userHandler.FindAll)
-	// protected.Get("/users/:id", userHandler.FindById)
-	// protected.Post("/users", userHandler.Create)
-	// protected.Put("/users/:id", userHandler.Update)
-	// protected.Delete("/users/:id", userHandler.Delete)
+	// Initialize repositories
 }
 `
 

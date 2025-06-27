@@ -30,18 +30,18 @@
 - PostgreSQL (recommended) or MySQL
 - Redis (optional, for caching)
 
-### What's New in v1.22.0
+### What's New in v1.23.0
 
-- **Enhanced Architecture**: Improved project structure with comprehensive Wire dependency injection documentation
-- **Route Management**: Added detailed route setup and RESTful API design patterns
-- **Code Quality**: Enhanced code maintainability with better architectural patterns and examples
-- **Documentation Excellence**: Comprehensive documentation updates covering all framework components
-- **Developer Experience**: Improved CLI tools and enhanced project scaffolding capabilities
+- **Resource Generator Fix**: Fixed resource generator to properly handle insertion points in v1.go
+- **Improved Error Handling**: Enhanced error messages for resource generation
+- **Documentation Updates**: Updated documentation for resource generation
+- **Bug Fixes**: Fixed "could not find insertion point in v1.go" error
+- **Developer Experience**: Better error handling and clearer error messages
 
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.22.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.23.0
 ```
 
 ### Verify Installation

@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.23.0] - 2024-12-21
+
+### Added
+- **Resource Generator Fix**: Fixed resource generator to properly handle insertion points in v1.go
+- **Improved Error Handling**: Enhanced error messages for resource generation
+- **Documentation Updates**: Updated documentation for resource generation
+
+### Fixed
+- **v1.go Insertion Point**: Added proper insertion point comment in v1.go template
+- **Resource Generation**: Fixed "could not find insertion point in v1.go" error
+
+### Improved
+- **Developer Experience**: Better error handling and clearer error messages
+- **Code Generation**: More reliable resource generation process
+
 ## [1.22.0] - 2024-12-20
 
 ### Added

@@ -302,7 +302,7 @@ func updateV1Routes(resourceName string) error {
 	
 	// Check if v1.go exists
 	if _, err := os.Stat(v1FilePath); os.IsNotExist(err) {
-		return fmt.Errorf("v1.go file not found at %s", v1FilePath)
+		return fmt.Errorf("v1.go file not found at %s. Make sure you are in the root directory of a Go To Oakhouse project", v1FilePath)
 	}
 	
 	// Read the current v1.go file
@@ -327,7 +327,15 @@ func updateV1Routes(resourceName string) error {
 		repoComment := "// Initialize repositories"
 		repoIndex := strings.Index(contentStr, repoComment)
 		if repoIndex == -1 {
-			return fmt.Errorf("could not find insertion point in v1.go")
+			// If neither comment exists, add the comment before the closing brace
+			closeBraceIndex := strings.LastIndex(contentStr, "}")
+			if closeBraceIndex == -1 {
+				return fmt.Errorf("could not find insertion point in v1.go: malformed file structure")
+			}
+			
+			// Insert the comment and route call before the closing brace
+			newContent := contentStr[:closeBraceIndex] + "\n\t" + commentPattern + "\n\t" + setupCall + "\n" + contentStr[closeBraceIndex:]
+			return os.WriteFile(v1FilePath, []byte(newContent), 0644)
 		}
 		
 		// Insert the comment and route call before the repositories comment
