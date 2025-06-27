@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	version = "1.12.0"
+	version = "1.13.0"
 )
 
 // main initializes and executes the Oakhouse CLI application with all available commands.
@@ -18,7 +18,7 @@ var (
 func main() {
 	rootCmd := &cobra.Command{
 		Use:     "oakhouse",
-		Short:   "🚀 Go To Oakhouse - A powerful Go framework for rapid API development",
+		Short:   "🚀 Go To Oakhouse - A powerful Go framework for rapid API development",g
 		Long:    `🚀 Go To Oakhouse is a Go framework for building APIs with clean architecture patterns.
 
 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
