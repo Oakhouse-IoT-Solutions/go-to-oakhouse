@@ -12,28 +12,38 @@ import (
 	"github.com/google/uuid"
 )
 
+// {{.ModelName}}Service defines the interface for {{.PackageName}}-related operations
 type {{.ModelName}}Service interface {
-	FindAll(ctx context.Context, dto *{{.PackageName}}.Get{{.ModelName}}Dto) ([]model.{{.ModelName}}, error)
-	FindByID(ctx context.Context, id uuid.UUID) (*model.{{.ModelName}}, error)
+	// FindAll retrieves all {{.PackageName}}s with optional filtering
+	FindAll(ctx context.Context, dto *{{.PackageName}}.Get{{.ModelName}}Dto) ([]model.{{.ModelName}}, int64, error)
+	
+	// FindById retrieves a {{.PackageName}} by its ID
+	FindById(ctx context.Context, id uuid.UUID) (*model.{{.ModelName}}, error)
+	
+	// Create creates a new {{.PackageName}}
 	Create(ctx context.Context, dto *{{.PackageName}}.Create{{.ModelName}}Dto) (*model.{{.ModelName}}, error)
-	Update(ctx context.Context, id uuid.UUID, dto *{{.PackageName}}.Update{{.ModelName}}Dto) (*model.{{.ModelName}}, error)
+	
+	// Update updates an existing {{.PackageName}}
+	Update(ctx context.Context, id uuid.UUID, dto *{{.PackageName}}.Update{{.ModelName}}Dto) error
+	
+	// Delete removes a {{.PackageName}} by its ID
 	Delete(ctx context.Context, id uuid.UUID) error
-	FindWithPagination(ctx context.Context, dto *{{.PackageName}}.Get{{.ModelName}}Dto) ([]model.{{.ModelName}}, int64, error)
 }
 `
 
-const ServiceImplTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+const ServiceTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 package service
 
 import (
 	"context"
-	"{{.ProjectName}}/dto/{{.PackageName}}"
-	"{{.ProjectName}}/model"
-	"{{.ProjectName}}/repository"
-	"{{.ProjectName}}/scope/{{.PackageName}}"
-	"{{.ProjectName}}/util"
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	dto "{{.ProjectName}}/dto/{{.PackageName}}"
+	"{{.ProjectName}}/model"
+	"{{.ProjectName}}/repository"
+	tscope "{{.ProjectName}}/scope/{{.PackageName}}"
 )
 
 type {{.VarName}}Service struct {
@@ -44,69 +54,67 @@ func New{{.ModelName}}Service(repo repository.{{.ModelName}}Repository) {{.Model
 	return &{{.VarName}}Service{repo: repo}
 }
 
-func (s *{{.VarName}}Service) FindAll(ctx context.Context, dto *{{.PackageName}}.Get{{.ModelName}}Dto) ([]model.{{.ModelName}}, error) {
-	scopes := s.buildScopes(dto)
-	
-	// Add pagination scope
-	scopes = append(scopes, {{.PackageName}}.PaginationScope(dto.Page, dto.PageSize))
-	
-	return s.repo.FindAll(ctx, scopes...)
+func (s *{{.VarName}}Service) FindAll(ctx context.Context, getDto *dto.Get{{.ModelName}}Dto) ([]model.{{.ModelName}}, int64, error) {
+	scopes := s.buildScopes(getDto)
+	offset := (*getDto.Page - 1) * *getDto.PageSize
+	return s.repo.FindWithPagination(ctx, offset, *getDto.PageSize, scopes...)
 }
 
-func (s *{{.VarName}}Service) FindByID(ctx context.Context, id uuid.UUID) (*model.{{.ModelName}}, error) {
+func (s *{{.VarName}}Service) FindById(ctx context.Context, id uuid.UUID) (*model.{{.ModelName}}, error) {
 	return s.repo.FindByID(ctx, id)
 }
 
-func (s *{{.VarName}}Service) Create(ctx context.Context, dto *{{.PackageName}}.Create{{.ModelName}}Dto) (*model.{{.ModelName}}, error) {
-	{{.VarName}} := &model.{{.ModelName}}{
-{{range .Fields}}		{{.Name}}: dto.{{.Name}},
+func (s *{{.VarName}}Service) Create(ctx context.Context, createDto *dto.Create{{.ModelName}}Dto) (*model.{{.ModelName}}, error) {
+	new{{.ModelName}} := &model.{{.ModelName}}{
+{{range .Fields}}		{{.Name}}: createDto.{{.Name}},
 {{end}}	}
 	
-	if err := s.repo.Create(ctx, {{.VarName}}); err != nil {
+	if err := s.repo.Create(ctx, new{{.ModelName}}); err != nil {
 		return nil, err
 	}
 	
-	return {{.VarName}}, nil
+	return new{{.ModelName}}, nil
 }
 
-func (s *{{.VarName}}Service) Update(ctx context.Context, id uuid.UUID, dto *{{.PackageName}}.Update{{.ModelName}}Dto) (*model.{{.ModelName}}, error) {
-	{{.VarName}}, err := s.repo.FindByID(ctx, id)
+func (s *{{.VarName}}Service) Update(ctx context.Context, id uuid.UUID, updateDto *dto.Update{{.ModelName}}Dto) error {
+	existing{{.ModelName}}, err := s.repo.FindByID(ctx, id)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	
-{{range .Fields}}	if dto.{{.Name}} != nil {
-		{{$.VarName}}.{{.Name}} = *dto.{{.Name}}
+{{range .Fields}}	if updateDto.{{.Name}} != nil {
+		existing{{$.ModelName}}.{{.Name}} = *updateDto.{{.Name}}
 	}
 {{end}}	
-	if err := s.repo.Update(ctx, {{.VarName}}); err != nil {
-		return nil, err
-	}
-	
-	return {{.VarName}}, nil
+	return s.repo.Update(ctx, existing{{.ModelName}})
 }
 
 func (s *{{.VarName}}Service) Delete(ctx context.Context, id uuid.UUID) error {
 	return s.repo.Delete(ctx, id)
 }
 
-func (s *{{.VarName}}Service) FindWithPagination(ctx context.Context, dto *{{.PackageName}}.Get{{.ModelName}}Dto) ([]model.{{.ModelName}}, int64, error) {
-	scopes := s.buildScopes(dto)
-	offset := (dto.Page - 1) * dto.PageSize
-	return s.repo.FindWithPagination(ctx, offset, dto.PageSize, scopes...)
-}
-
-func (s *{{.VarName}}Service) buildScopes(dto *{{.PackageName}}.Get{{.ModelName}}Dto) []func(*gorm.DB) *gorm.DB {
+func (s *{{.VarName}}Service) buildScopes(getDto *dto.Get{{.ModelName}}Dto) []func(*gorm.DB) *gorm.DB {
 	var scopes []func(*gorm.DB) *gorm.DB
 	
-	// Add date range filter
-	scopes = append(scopes, {{.PackageName}}.DateRangeFilter(dto))
-	
-	// Add your custom scopes here based on DTO fields
-	// Example:
-	// if dto.Status != \"\" {
-	//     scopes = append(scopes, {{.PackageName}}.FilterByStatus(dto.Status))
-	// }
+	// Add field-specific filters
+{{range .Fields}}{{if eq .Type "string"}}	if getDto.{{.Name}} != nil && *getDto.{{.Name}} != "" {
+		scopes = append(scopes, tscope.FilterBy{{.Name}}(*getDto.{{.Name}}))
+	}
+{{else}}	if getDto.{{.Name}} != nil {
+		scopes = append(scopes, tscope.FilterBy{{.Name}}(*getDto.{{.Name}}))
+	}
+{{end}}{{end}}	
+	// Add date range filtering if available
+	if getDto.StartDate != nil || getDto.EndDate != nil {
+		var startTime, endTime time.Time
+		if getDto.StartDate != nil {
+			startTime = *getDto.StartDate
+		}
+		if getDto.EndDate != nil {
+			endTime = *getDto.EndDate
+		}
+		scopes = append(scopes, tscope.FilterByDateRange(startTime, endTime))
+	}
 	
 	return scopes
 }

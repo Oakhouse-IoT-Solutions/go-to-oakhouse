@@ -12,11 +12,13 @@ import (
 
 // Field represents a struct field with metadata for code generation
 type Field struct {
-	Name    string
-	Type    string
-	Tag     string
-	GormTag string
-	JsonTag string
+	Name      string
+	Type      string
+	Tag       string
+	GormTag   string
+	JsonTag   string
+	QueryType string
+	QueryTag  string
 }
 
 // WriteFile creates files from Go templates with dynamic data injection.
@@ -63,11 +65,13 @@ func ParseFields(fields []string) []Field {
 			lowerName := strings.ToLower(parts[0])
 
 			result = append(result, Field{
-				Name:    fieldName,
-				Type:    fieldType,
-				Tag:     fmt.Sprintf(`json:"%s" gorm:"column:%s"`, lowerName, lowerName),
-				GormTag: fmt.Sprintf("column:%s", lowerName),
-				JsonTag: lowerName,
+				Name:      fieldName,
+				Type:      fieldType,
+				Tag:       fmt.Sprintf(`json:"%s" gorm:"column:%s"`, lowerName, lowerName),
+				GormTag:   fmt.Sprintf("column:%s", lowerName),
+				JsonTag:   lowerName,
+				QueryType: "*" + fieldType,
+				QueryTag:  lowerName,
 			})
 		}
 	}

@@ -4,7 +4,7 @@ package templates
 // This file serves as the main entry point for all template modules.
 // Templates have been organized into separate files for better maintainability:
 //
-// - model_templates.go: Model/Entity templates
+// - model_templates.go: Model templates
 // - repository_templates.go: Repository interface and implementation templates
 // - service_templates.go: Service interface and implementation templates
 // - handler_templates.go: HTTP handler templates
@@ -12,6 +12,7 @@ package templates
 // - scope_templates.go: GORM scope templates
 // - middleware_templates.go: Middleware templates
 // - route_templates.go: Route setup templates
+// - project_templates.go: Project setup and configuration templates
 // - template_helpers.go: Helper functions and data structures
 //
 // All templates are now modularized for easier maintenance and development.

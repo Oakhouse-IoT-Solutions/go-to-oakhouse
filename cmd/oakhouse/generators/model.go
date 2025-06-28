@@ -13,7 +13,7 @@ import (
 // Fields are parsed and mapped to appropriate Go types with validation tags.
 // 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func GenerateModel(name string, fields []string) error {
-	filename := fmt.Sprintf("entity/%s.go", strings.ToLower(name))
+	filename := fmt.Sprintf("model/%s.go", strings.ToLower(name))
 	return utils.WriteFile(filename, templates.ModelTemplate, map[string]interface{}{
 		"ModelName": name,
 		"TableName": strings.ToLower(name) + "s",

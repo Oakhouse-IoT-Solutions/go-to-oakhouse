@@ -36,7 +36,7 @@ func CreateNewProject(projectName string) error {
 		"route",
 		"util",
 		"middleware",
-		"entity",
+		"model",
 		"static",
 	}
 

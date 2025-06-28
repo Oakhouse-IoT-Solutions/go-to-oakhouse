@@ -51,7 +51,7 @@ func updateV1Routes(resourceName string) error {
 	}
 
 	contentStr := string(content)
-	setupCall := fmt.Sprintf("Setup%sRoutes(v1)", resourceName)
+	setupCall := fmt.Sprintf("Setup%sRoutes(api, db)", resourceName)
 
 	// Check if the route is already registered
 	if strings.Contains(contentStr, setupCall) {
@@ -98,7 +98,7 @@ func updateV1Routes(resourceName string) error {
 	// Find the last route setup line after the comment
 	if commentLineIndex != -1 {
 		for i := commentLineIndex + 1; i < len(lines); i++ {
-			if strings.Contains(lines[i], "Setup") && strings.Contains(lines[i], "Routes(v1)") {
+			if strings.Contains(lines[i], "Setup") && (strings.Contains(lines[i], "Routes(api)") || strings.Contains(lines[i], "Routes(api, db)")) {
 				lastRouteLineIndex = i
 			} else if strings.TrimSpace(lines[i]) != "" && !strings.Contains(lines[i], "Setup") {
 				// We've reached a non-route line
