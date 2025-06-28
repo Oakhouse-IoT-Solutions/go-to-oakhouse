@@ -46,11 +46,23 @@ func GenerateResource(name string, fields []string) ([]string, error) {
 	createdFiles = append(createdFiles, fmt.Sprintf("dto/%s/update_%s_dto.go", strings.ToLower(name), strings.ToLower(name)))
 	createdFiles = append(createdFiles, fmt.Sprintf("dto/%s/get_%s_dto.go", strings.ToLower(name), strings.ToLower(name)))
 
-	// Add scope generation - this was missing!
+	// Add scope generation - this was missing! 
 	if err := GenerateScope(name, "filter"); err != nil {
 		return nil, err
 	}
 	createdFiles = append(createdFiles, fmt.Sprintf("scope/%s/filter.go", strings.ToLower(name)))
+
+	// Generate field-specific filters for each field
+	for _, field := range fields {
+		parts := strings.Split(field, ":")
+		if len(parts) == 2 {
+			fieldName := strings.Title(parts[0])
+			fieldType := parts[1]
+			if err := GenerateFieldFilter(name, fieldName, fieldType); err != nil {
+				return nil, fmt.Errorf("failed to generate field filter for %s: %w", fieldName, err)
+			}
+		}
+	}
 
 	if err := GenerateRoute(name); err != nil {
 		return nil, err

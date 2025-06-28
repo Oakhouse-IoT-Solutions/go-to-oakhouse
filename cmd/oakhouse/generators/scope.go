@@ -80,14 +80,14 @@ import (
 	"gorm.io/gorm"
 )
 
-// DateRangeScope applies date range filtering with pointer types for consistency
-func DateRangeScope(startDate, endDate *time.Time, column string) func(db *gorm.DB) *gorm.DB {
+// DateRangeScope applies date range filtering with time.Time values for consistency
+func DateRangeScope(startDate, endDate time.Time, column string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		if startDate != nil {
-			db = db.Where(column+" >= ?", *startDate)
+		if !startDate.IsZero() {
+			db = db.Where(column+" >= ?", startDate)
 		}
-		if endDate != nil {
-			db = db.Where(column+" <= ?", *endDate)
+		if !endDate.IsZero() {
+			db = db.Where(column+" <= ?", endDate)
 		}
 		return db
 	}
@@ -188,7 +188,7 @@ func GeneratePaginationScope(modelName string) error {
 		"ModelName":   modelName,
 	}
 
-	paginationFunc, err := renderTemplate(templates.PaginationScopeTemplate, templateData)
+	paginationFunc, err := renderTemplate(templates.PaginationScopeFunctionOnlyTemplate, templateData)
 	if err != nil {
 		return fmt.Errorf("failed to render pagination scope template: %w", err)
 	}
@@ -228,7 +228,7 @@ func GenerateAdvancedDateRangeFilter(modelName string) error {
 		"ModelName":   modelName,
 	}
 
-	advancedFilterFunc, err := renderTemplate(templates.AdvancedDateRangeFilterTemplate, templateData)
+	advancedFilterFunc, err := renderTemplate(templates.AdvancedDateRangeFilterFunctionOnlyTemplate, templateData)
 	if err != nil {
 		return fmt.Errorf("failed to render advanced date range filter template: %w", err)
 	}

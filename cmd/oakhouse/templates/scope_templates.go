@@ -3,11 +3,6 @@ package templates
 
 // Scope templates
 const ScopeTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
-package {{.PackageName}}
-
-import (
-	"gorm.io/gorm"
-)
 
 // FilterBy{{.FieldName}} filters {{.ModelName}} by {{.FieldName}}
 func FilterBy{{.FieldName}}({{.ParamName}} {{.ParamType}}) func(db *gorm.DB) *gorm.DB {
@@ -61,6 +56,22 @@ func FilterByDateRange(startDate, endDate time.Time) func(db *gorm.DB) *gorm.DB 
 }
 `
 
+// DateRangeFilterFunctionOnlyTemplate for appending to existing files
+const DateRangeFilterFunctionOnlyTemplate = `// FilterByDateRange filters {{.ModelName}} by {{.FieldName}} date range
+func FilterByDateRange(startDate, endDate time.Time) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if !startDate.IsZero() && !endDate.IsZero() {
+			return db.Where("{{.ColumnName}} BETWEEN ? AND ?", startDate, endDate)
+		} else if !startDate.IsZero() {
+			return db.Where("{{.ColumnName}} >= ?", startDate)
+		} else if !endDate.IsZero() {
+			return db.Where("{{.ColumnName}} <= ?", endDate)
+		}
+		return db
+	}
+}
+`
+
 // AdvancedDateRangeFilterTemplate for more complex date range filtering
 const AdvancedDateRangeFilterTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 package {{.PackageName}}
@@ -88,6 +99,25 @@ func (f *DateRangeFilter) Apply(db *gorm.DB, column string) *gorm.DB {
 }
 `
 
+// AdvancedDateRangeFilterFunctionOnlyTemplate for appending to existing files
+const AdvancedDateRangeFilterFunctionOnlyTemplate = `// DateRangeFilter applies date range filtering to {{.ModelName}}
+type DateRangeFilter struct {
+	StartDate *time.Time ` + "`json:\"start_date\" query:\"start_date\"`" + `
+	EndDate   *time.Time ` + "`json:\"end_date\" query:\"end_date\"`" + `
+}
+
+// Apply applies the date range filter
+func (f *DateRangeFilter) Apply(db *gorm.DB, column string) *gorm.DB {
+	if f.StartDate != nil {
+		db = db.Where(column+" >= ?", *f.StartDate)
+	}
+	if f.EndDate != nil {
+		db = db.Where(column+" <= ?", *f.EndDate)
+	}
+	return db
+}
+`
+
 // PaginationScopeTemplate for pagination
 const PaginationScopeTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 package {{.PackageName}}
@@ -97,6 +127,23 @@ import (
 )
 
 // PaginationScope applies pagination to {{.ModelName}} queries
+func PaginationScope(page, pageSize int) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		offset := (page - 1) * pageSize
+		return db.Offset(offset).Limit(pageSize)
+	}
+}
+
+// CountScope returns total count for {{.ModelName}}
+func CountScope(db *gorm.DB) (int64, error) {
+	var count int64
+	err := db.Count(&count).Error
+	return count, err
+}
+`
+
+// PaginationScopeFunctionOnlyTemplate for appending to existing files
+const PaginationScopeFunctionOnlyTemplate = `// PaginationScope applies pagination to {{.ModelName}} queries
 func PaginationScope(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		offset := (page - 1) * pageSize
