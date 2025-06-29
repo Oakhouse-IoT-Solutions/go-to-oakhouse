@@ -4,7 +4,6 @@
 
 <div align="center">
   <img src="https://upload.wikimedia.org/wikipedia/en/4/42/Richard_Feynman_Nobel.jpg" alt="Richard Feynman" width="200" style="border-radius: 10px; margin: 10px;">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/EmpireRomain.png/300px-EmpireRoman.png" alt="Julius Caesar" width="200" style="border-radius: 10px; margin: 10px;">
 </div>
 
 **Richard Feynman** 🏆, a Nobel Prize–winning physicist, was known not just for his genius—but for how clearly he explained complex ideas.
