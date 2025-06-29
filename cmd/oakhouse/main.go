@@ -6,11 +6,8 @@ import (
 	"os"
 
 	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/commands"
+	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/utils"
 	"github.com/spf13/cobra"
-)
-
-var (
-	version = "1.24.0"
 )
 
 // main initializes and executes the Oakhouse CLI application with all available commands.
@@ -32,7 +29,7 @@ Features:
 • Built-in authentication middleware
 • Database support
 • Docker containerization`,
-		Version: version,
+		Version: utils.Version,
 	}
 
 	// Add subcommands from commands package

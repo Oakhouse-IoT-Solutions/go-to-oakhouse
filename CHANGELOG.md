@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.25.0] - 2024-12-21
+
+### Added
+- **Dynamic Version Support**: Made version numbers dynamic in project templates
+- **Template Enhancement**: Updated IndexHtmlTemplate to use {{.Version}} placeholder
+- **Route Generator Fix**: Fixed pattern matching for route registration detection
+- **Static File Serving**: Added automatic static file serving to new projects
+
+### Fixed
+- **Version Management**: Centralized version control across all project files
+- **Template Consistency**: Ensured version references are dynamically populated
+- **Generator Reliability**: Improved route detection and insertion logic
+
+### Improved
+- **Developer Experience**: Simplified version updates across the entire framework
+- **Project Generation**: Enhanced consistency in generated project structure
+
 ## [1.24.0] - 2024-12-21
 
 ### Added

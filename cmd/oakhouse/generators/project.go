@@ -72,6 +72,7 @@ func CreateNewProject(projectName string) error {
 		if err := utils.WriteFile(filepath.Join(projectName, filename), tmpl, map[string]string{
 			"ProjectName": projectName,
 			"ModuleName":  strings.ReplaceAll(projectName, "-", ""),
+			"Version":     utils.Version,
 		}); err != nil {
 			return fmt.Errorf("failed to generate %s: %w", filename, err)
 		}

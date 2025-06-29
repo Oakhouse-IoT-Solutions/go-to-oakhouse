@@ -30,7 +30,7 @@
 - PostgreSQL (recommended) or MySQL
 - Redis (optional, for caching)
 
-### What's New in v1.24.0
+### What's New in v1.25.0
 
 - **Scope Generation Enhancement**: Fixed duplicate import issues in scope generation system
 - **Template System Improvement**: Added function-only templates for appending to existing files
@@ -41,7 +41,7 @@
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.24.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.25.0
 ```
 
 ### Verify Installation

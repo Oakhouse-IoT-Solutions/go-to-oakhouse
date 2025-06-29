@@ -98,7 +98,7 @@ func updateV1Routes(resourceName string) error {
 	// Find the last route setup line after the comment
 	if commentLineIndex != -1 {
 		for i := commentLineIndex + 1; i < len(lines); i++ {
-			if strings.Contains(lines[i], "Setup") && (strings.Contains(lines[i], "Routes(api)") || strings.Contains(lines[i], "Routes(api, db)")) {
+			if strings.Contains(lines[i], "Setup") && (strings.Contains(lines[i], "Routes(v1)") || strings.Contains(lines[i], "Routes(v1, db)")) {
 				lastRouteLineIndex = i
 			} else if strings.TrimSpace(lines[i]) != "" && !strings.Contains(lines[i], "Setup") {
 				// We've reached a non-route line

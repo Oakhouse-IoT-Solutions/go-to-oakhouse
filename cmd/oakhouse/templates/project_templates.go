@@ -297,6 +297,9 @@ import (
 
 // SetupRoutes configures all application routes
 func SetupRoutes(app *fiber.App, db *gorm.DB) {
+	// Serve static files
+	app.Static("/", "./static")
+	
 	// Health check
 	app.Get("/health", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
@@ -533,62 +536,193 @@ const IndexHtmlTemplate = `<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.ProjectName}} API</title>
+    <title>Go To Oakhouse - Rapid API Development Framework</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        * {
             margin: 0;
-            padding: 40px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
+        
         .container {
-            text-align: center;
-            max-width: 600px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
         }
-        h1 {
-            font-size: 3rem;
+        
+        .hero {
+            text-align: center;
+            color: white;
+            padding: 4rem 0;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
             margin-bottom: 1rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
-        p {
-            font-size: 1.2rem;
+        
+        .hero p {
+            font-size: 1.3rem;
             margin-bottom: 2rem;
             opacity: 0.9;
         }
-        .api-link {
+        
+        .version-badge {
             display: inline-block;
-            padding: 12px 24px;
             background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-bottom: 2rem;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .feature-card {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
             color: white;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .feature-card p {
+            opacity: 0.9;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 1rem 2rem;
             text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255,107,107,0.3);
         }
-        .api-link:hover {
-            background: rgba(255,255,255,0.3);
+        
+        .cta-button:hover {
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,107,107,0.4);
         }
-        .footer {
-            margin-top: 3rem;
-            opacity: 0.7;
-            font-size: 0.9rem;
+        
+        .author-section {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .author-section h2 {
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .author-info {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .code-block {
+            background: rgba(0,0,0,0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+            color: #fff;
+            overflow-x: auto;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🚀 {{.ProjectName}}</h1>
-        <p>Your API is up and running!</p>
-        <a href="/api/v1" class="api-link">Explore API</a>
-        <div class="footer">
-            <p>🏡 Proudly Created with Oakhouse</p>
+        <div class="hero">
+            <h1>🏠 Go To Oakhouse</h1>
+            <div class="version-badge">{{.Version}}</div>
+            <p>A powerful Go framework for rapid API development with clean architecture patterns</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature-card">
+                <h3>🚀 Fast Development</h3>
+                <p>CLI tool for rapid scaffolding and code generation. Build APIs in minutes, not hours.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🏗️ Clean Architecture</h3>
+                <p>Repository, Service, Handler pattern with dependency injection for maintainable code.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🔧 Code Generation</h3>
+                <p>Generate models, handlers, services, repositories, and routes with a single command.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🌐 High Performance</h3>
+                <p>Built on top of Go Fiber framework for lightning-fast HTTP performance.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🗄️ GORM Integration</h3>
+                <p>Advanced ORM with scoping support and database management.</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3>🎯 Simplified Handlers</h3>
+                <p>Generate lightweight handlers with text responses for rapid prototyping.</p>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <h2 style="color: white; margin-bottom: 1rem;">Get Started Now</h2>
+            <div class="code-block">
+                go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@{{.Version}}
+            </div>
+            <a href="https://github.com/Oakhouse-Technology/go-to-oakhouse" class="cta-button">View on GitHub</a>
+        </div>
+        
+        <div class="author-section">
+            <h2>👨‍💻 Created by</h2>
+            <div class="author-info">
+                <strong>Htet Waiyan</strong><br>
+                <em>From Oakhouse Technology</em><br><br>
+                <p>Passionate about building developer tools that make Go development faster and more enjoyable. 
+                Go To Oakhouse was born from the need to rapidly prototype and build production-ready APIs 
+                with clean, maintainable code.</p>
+            </div>
         </div>
     </div>
 </body>
