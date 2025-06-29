@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.24.0] - 2024-12-21
+
+### Added
+- **Scope Generation Enhancement**: Fixed duplicate import issues in scope generation system
+- **Template System Improvement**: Added function-only templates for appending to existing files
+- **Code Quality**: Enhanced maintainability and consistency across generated code
+
+### Fixed
+- **Duplicate Imports**: Eliminated duplicate package declarations and import statements in generated filter files
+- **Template Consistency**: Ensured all date range functions use time.Time values consistently
+- **Generator Logic**: Fixed scope generation to prevent code duplication
+
+### Improved
+- **Clean Code Generation**: Generated files now have proper structure with single package/import blocks
+- **Template Architecture**: Clear separation between full file templates and append-only templates
+- **API Consistency**: Standardized parameter types and validation approach across all functions
+
 ## [1.23.0] - 2024-12-21
 
 ### Added

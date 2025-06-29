@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_NAME=oakhouse-release-v1.24.0_db
+      - DB_SSL_MODE=disable
+    depends_on:
+      - postgres
+    networks:
+      - oakhouse-release-v1.24.0_network
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=oakhouse-release-v1.24.0_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - oakhouse-release-v1.24.0_network
+
+volumes:
+  postgres_data:
+
+networks:
+  oakhouse-release-v1.24.0_network:
+    driver: bridge

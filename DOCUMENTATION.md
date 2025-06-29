@@ -30,18 +30,18 @@
 - PostgreSQL (recommended) or MySQL
 - Redis (optional, for caching)
 
-### What's New in v1.23.0
+### What's New in v1.24.0
 
-- **Resource Generator Fix**: Fixed resource generator to properly handle insertion points in v1.go
-- **Improved Error Handling**: Enhanced error messages for resource generation
-- **Documentation Updates**: Updated documentation for resource generation
-- **Bug Fixes**: Fixed "could not find insertion point in v1.go" error
-- **Developer Experience**: Better error handling and clearer error messages
+- **Scope Generation Enhancement**: Fixed duplicate import issues in scope generation system
+- **Template System Improvement**: Added function-only templates for appending to existing files
+- **Code Quality**: Enhanced maintainability and consistency across generated code
+- **Duplicate Imports Fix**: Eliminated duplicate package declarations and import statements in generated filter files
+- **Template Consistency**: Ensured all date range functions use time.Time values consistently
 
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.23.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.24.0
 ```
 
 ### Verify Installation
