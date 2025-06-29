@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.27.0] - 2024-07-26
+
+### Added
+
+- Updated project version to 1.27.0.
+
 ## [1.26.0] - 2024-12-21
 
 ### Fixed
@@ -351,3 +357,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fiber framework integration
 - Docker containerization support
 - Comprehensive CLI tool for scaffolding
+
+[1.26.0]: https://github.com/oakhouse-ai/go-to-oakhouse/compare/v1.25.0...v1.26.0
+[1.27.0]: https://github.com/oakhouse-ai/go-to-oakhouse/compare/v1.26.0...v1.27.0
