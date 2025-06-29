@@ -41,82 +41,107 @@ func updateV1Routes(resourceName string) error {
 
 	// Check if v1.go exists
 	if _, err := os.Stat(v1FilePath); os.IsNotExist(err) {
-		return fmt.Errorf("v1.go file not found at %s. Make sure you are in the root directory of a Go To Oakhouse project", v1FilePath)
+		return fmt.Errorf("v1.go file not found at %s. Make sure you're in the root directory of a Go To Oakhouse project", v1FilePath)
 	}
 
-	// Read the current v1.go file
-	content, err := os.ReadFile(v1FilePath)
+	contentBytes, err := os.ReadFile(v1FilePath)
 	if err != nil {
 		return fmt.Errorf("failed to read v1.go: %v", err)
 	}
 
-	contentStr := string(content)
+	lines := strings.Split(string(contentBytes), "\n")
+	setupFuncStart := -1
+	setupFuncEnd := -1
+	apiGroupLine := `api := app.Group("/api/v1")`
+	apiGroupComment := "// API v1 routes"
+	resourceComment := "// Setup resource routes"
 	setupCall := fmt.Sprintf("Setup%sRoutes(api, db)", resourceName)
 
-	// Check if the route is already registered
-	if strings.Contains(contentStr, setupCall) {
-		return nil // Already registered
-	}
-
-	// Find the insertion point after the "// Setup resource routes" comment
-	commentPattern := "// Setup resource routes"
-	commentIndex := strings.Index(contentStr, commentPattern)
-	if commentIndex == -1 {
-		// If comment doesn't exist, add it before "// Initialize repositories"
-		repoComment := "// Initialize repositories"
-		repoIndex := strings.Index(contentStr, repoComment)
-		if repoIndex == -1 {
-			// If neither comment exists, add the comment before the closing brace
-			closeBraceIndex := strings.LastIndex(contentStr, "}")
-			if closeBraceIndex == -1 {
-				return fmt.Errorf("could not find insertion point in v1.go: malformed file structure")
-			}
-
-			// Insert the comment and route call before the closing brace
-			newContent := contentStr[:closeBraceIndex] + "\n\t" + commentPattern + "\n\t" + setupCall + "\n" + contentStr[closeBraceIndex:]
-			return os.WriteFile(v1FilePath, []byte(newContent), 0644)
-		}
-
-		// Insert the comment and route call before the repositories comment
-		newContent := contentStr[:repoIndex] + "\t" + commentPattern + "\n\t" + setupCall + "\n\n\t" + contentStr[repoIndex:]
-		return os.WriteFile(v1FilePath, []byte(newContent), 0644)
-	}
-
-	// Find the end of the route setup section
-	lines := strings.Split(contentStr, "\n")
-	commentLineIndex := -1
-	lastRouteLineIndex := -1
-
-	// Find the comment line
+	// Find SetupRoutes function boundaries
 	for i, line := range lines {
-		if strings.Contains(line, commentPattern) {
-			commentLineIndex = i
+		if strings.Contains(line, "func SetupRoutes(") {
+			setupFuncStart = i
+		}
+		if setupFuncStart != -1 && strings.TrimSpace(line) == "}" {
+			setupFuncEnd = i
+			break
+		}
+	}
+	if setupFuncStart == -1 || setupFuncEnd == -1 {
+		return fmt.Errorf("could not find SetupRoutes function in v1.go")
+	}
+
+	// Prevent duplicate SetupXxxRoutes call
+	for _, line := range lines[setupFuncStart:setupFuncEnd] {
+		if strings.TrimSpace(line) == setupCall {
+			return nil // Already registered
+		}
+	}
+
+	// Add `api := app.Group(...)` if missing
+	apiGroupExists := false
+	apiGroupIndex := -1
+	for i := setupFuncStart; i < setupFuncEnd; i++ {
+		if strings.TrimSpace(lines[i]) == apiGroupLine {
+			apiGroupExists = true
+			apiGroupIndex = i
 			break
 		}
 	}
 
-	// Find the last route setup line after the comment
-	if commentLineIndex != -1 {
-		for i := commentLineIndex + 1; i < len(lines); i++ {
-			if strings.Contains(lines[i], "Setup") && (strings.Contains(lines[i], "Routes(v1)") || strings.Contains(lines[i], "Routes(v1, db)")) {
-				lastRouteLineIndex = i
-			} else if strings.TrimSpace(lines[i]) != "" && !strings.Contains(lines[i], "Setup") {
-				// We've reached a non-route line
-				break
-			}
+	if !apiGroupExists {
+		// Insert API group before closing brace
+		insertIndex := setupFuncEnd
+		lines = append(lines[:insertIndex], append([]string{
+			"\t" + apiGroupComment,
+			"\t" + apiGroupLine,
+		}, lines[insertIndex:]...)...)
+		setupFuncEnd += 2
+		apiGroupIndex = insertIndex + 1 // line number of api := ...
+	}
+
+	// Look for resource comment or SetupXxxRoutes block
+	resourceCommentIndex := -1
+	lastSetupCallIndex := -1
+	for i := setupFuncStart; i < setupFuncEnd; i++ {
+		line := strings.TrimSpace(lines[i])
+		if line == resourceComment {
+			resourceCommentIndex = i
+		}
+		if strings.HasPrefix(line, "Setup") && strings.Contains(line, "Routes(api, db)") {
+			lastSetupCallIndex = i
 		}
 	}
 
-	// Insert the new route call after the last route setup line
-	if lastRouteLineIndex != -1 {
-		// Insert after the last route line
-		lines = append(lines[:lastRouteLineIndex+1], append([]string{"\t" + setupCall}, lines[lastRouteLineIndex+1:]...)...)
+	if resourceCommentIndex != -1 {
+		// Insert below the comment
+		insertIndex := resourceCommentIndex + 1
+		lines = append(lines[:insertIndex], append([]string{"\t" + setupCall}, lines[insertIndex:]...)...)
+	} else if lastSetupCallIndex != -1 {
+		// Insert after last SetupXyzRoutes
+		insertIndex := lastSetupCallIndex + 1
+		lines = append(lines[:insertIndex], append([]string{"\t" + setupCall}, lines[insertIndex:]...)...)
+	} else if apiGroupIndex != -1 {
+		// Insert after API group
+		insertIndex := apiGroupIndex + 1
+		lines = append(lines[:insertIndex], append([]string{
+			"",
+			"\t" + resourceComment,
+			"\t" + setupCall,
+		}, lines[insertIndex:]...)...)
 	} else {
-		// Insert after the comment line
-		lines = append(lines[:commentLineIndex+1], append([]string{"\t" + setupCall}, lines[commentLineIndex+1:]...)...)
+		// Last fallback — just before end of function
+		insertIndex := setupFuncEnd
+		lines = append(lines[:insertIndex], append([]string{
+			"",
+			"\t" + apiGroupComment,
+			"\t" + apiGroupLine,
+			"",
+			"\t" + resourceComment,
+			"\t" + setupCall,
+		}, lines[insertIndex:]...)...)
 	}
 
-	// Write the updated content back to the file
-	updatedContent := strings.Join(lines, "\n")
-	return os.WriteFile(v1FilePath, []byte(updatedContent), 0644)
+	// Write final content
+	return os.WriteFile(v1FilePath, []byte(strings.Join(lines, "\n")), 0644)
 }

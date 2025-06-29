@@ -40,8 +40,8 @@ const EnvExampleTemplate = `# Database Configuration
 DB_HOST=localhost
 DB_PORT=5432
 DB_USER=postgres
-DB_PASSWORD=password
-DB_NAME={{.ProjectName}}_db
+DB_PASSWORD=
+DB_NAME=postgres
 DB_SSL_MODE=disable
 
 # Server Configuration
@@ -308,13 +308,6 @@ func SetupRoutes(app *fiber.App, db *gorm.DB) {
 		})
 	})
 
-	// API v1 routes
-	api := app.Group("/api/v1")
-
-	// Add your resource routes here
-	// Example:
-	// SetupUserRoutes(api, db)
-	// SetupProductRoutes(api, db)
 }
 `
 
@@ -565,52 +558,15 @@ const IndexHtmlTemplate = `<!DOCTYPE html>
         }
         
         .hero h1 {
-            font-size: 4.5rem;
+            font-size: 3.5rem;
             margin-bottom: 1rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
-        .hero h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
         .hero p {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             margin-bottom: 2rem;
             opacity: 0.9;
-            line-height: 1.8;
-        }
-        
-        .philosophy-section {
-            background: rgba(255,255,255,0.1);
-            padding: 3rem;
-            border-radius: 20px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.2);
-            margin: 2rem 0;
-            text-align: left;
-        }
-        
-        .philosophy-images {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-        
-        .philosophy-images img {
-            width: 200px;
-            height: 250px;
-            object-fit: cover;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-            transition: transform 0.3s ease;
-        }
-        
-        .philosophy-images img:hover {
-            transform: scale(1.05);
         }
         
         .version-badge {
@@ -706,50 +662,8 @@ const IndexHtmlTemplate = `<!DOCTYPE html>
 <body>
     <div class="container">
         <div class="hero">
-            <h1>🏠 Oakhouse - Go the Oakhouse Way</h1>
-            <div class="version-badge">{{ .version }}</div>
-            <h2>🧠 Welcome to Go—the Oakhouse way</h2>
-            
-            <div class="philosophy-section">
-                <div class="philosophy-images">
-                     <img src="https://upload.wikimedia.org/wikipedia/en/4/42/Richard_Feynman_Nobel.jpg" alt="Richard Feynman">
-                 </div>
-                
-                <p><strong>Richard Feynman</strong> 🏆, a Nobel Prize–winning physicist, was known not just for his genius—but for how clearly he explained complex ideas.</p>
-                <p>He believed that if you can't explain something simply, you don't really understand it.</p>
-                <p>His method, the <strong>Feynman Technique</strong> 🎯, was all about breaking things down, identifying gaps, and refining your explanation until it truly made sense.</p>
-                <p>That philosophy is at the heart of <strong>Oakhouse</strong> 🏠.</p>
-                
-                <p><strong>Go to Oakhouse</strong> means more than just using a framework.</p>
-                <p>It means going back to that place— 🌟<br>
-                Where curiosity led the way.<br>
-                Where you weren't afraid to ask dumb questions. ❓<br>
-                Where you stayed up late, learned with friends, and built things just for the fun of it. 🌙👥</p>
-                
-                <p>The name comes from that house— 🏡<br>
-                Where we lived after university.<br>
-                We were broke, hungry, and foolish— 💸🍕😅<br>
-                But full of ideas. 💡</p>
-                
-                <p><strong>Oakhouse</strong> brings that spirit to Go.</p>
-                
-                <p>I hate complexity for the sake of complexity. 😤<br>
-                And if you're new to Go, or coming from another language, you've probably felt that pain.</p>
-                
-                <p><strong>Oakhouse</strong> 🏠 is a framework built to make your start with Go easier.<br>
-                It's for beginners and developers coming from other languages. 👨‍💻👩‍💻<br>
-                It helps you skip repetitive work, avoid boilerplate code, and build real projects faster—without reinventing the wheel. ⚡</p>
-                
-                <p>More than that, <strong>Oakhouse</strong> helps you conquer complexity. ⚔️<br>
-                Just like <strong>Julius Caesar</strong> said:<br>
-                <em>"I came, I saw, I conquered."</em> 🏛️<br>
-                Here, you'll come, you'll learn, and you'll conquer Go. 🎯</p>
-                
-                <p>Like <strong>Laravel</strong> for PHP or <strong>Rails</strong> for Ruby,<br>
-                <strong>Oakhouse</strong> is that—but for Go.<br>
-                Simple. Curious. Honest. ✨</p>
-            </div>
-            
+            <h1>🏠 Go To Oakhouse</h1>
+            <div class="version-badge">{{.Version}}</div>
             <p>A powerful Go framework for rapid API development with clean architecture patterns</p>
         </div>
         
@@ -788,7 +702,7 @@ const IndexHtmlTemplate = `<!DOCTYPE html>
         <div class="cta-section">
             <h2 style="color: white; margin-bottom: 1rem;">Get Started Now</h2>
             <div class="code-block">
-                go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@{{ .version }}
+                go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@{{.Version}}
             </div>
             <a href="https://github.com/Oakhouse-Technology/go-to-oakhouse" class="cta-button">View on GitHub</a>
         </div>
