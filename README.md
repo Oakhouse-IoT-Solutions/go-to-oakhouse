@@ -1,4 +1,4 @@
-# 🏠 Oakhouse - Go the Oakhouse Way
+# 🏠  The Oakhouse Way to Build Faster with Go
 
 ## Welcome to Go To Oakhouse
 
@@ -251,8 +251,8 @@ These simplified handlers allow you to:
 ```go
 type UserService interface {
     Create(ctx context.Context, req *dto.CreateUserDto) (*model.User, error)
-FindAll(ctx context.Context, filter *dto.GetUserDto) ([]*model.User, int64, error)
-FindById(ctx context.Context, id uuid.UUID) (*model.User, error)
+    FindAll(ctx context.Context, filter *dto.GetUserDto) ([]*model.User, int64, error)
+    FindById(ctx context.Context, id uuid.UUID) (*model.User, error)
     Update(ctx context.Context, id uuid.UUID, req *dto.UpdateUserDto) error
     Delete(ctx context.Context, id uuid.UUID) error
 }
