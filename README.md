@@ -1,4 +1,4 @@
-# 🏠 Oakhouse - Go the Oakhouse Way
+# 🏠  The Oakhouse Way to Build Faster with Go
 
 ## Welcome to Go To Oakhouse
 
