@@ -124,14 +124,14 @@ func (s *{{.VarName}}Service) buildScopes(getDto *dto.Get{{.ModelName}}Dto) []fu
 const SimpleServiceTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 package service
 
-// {{.VarName}}Service implements the {{.ModelName}}Service interface
-type {{.VarName}}Service struct {}
+// {{.ModelName}}Service implements basic operations without database dependencies
+type {{.ModelName}}Service struct{}
 
 func New{{.ModelName}}Service() {{.ModelName}}Service {
-	return &{{.VarName}}Service{}
+	return {{.ModelName}}Service{}
 }
 
-func (s *{{.VarName}}Service) Index() string {
-	return c.SendString("{{.ModelName}}s working")
+func (s {{.ModelName}}Service) Index() string {
+	return "{{.ModelName}}s working"
 }
 `

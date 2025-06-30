@@ -42,11 +42,31 @@ func GenerateService(name string, fields []string) error {
 		return fmt.Errorf("failed to get module name: %w", err)
 	}
 
-	return utils.WriteFile(filename, templates.SimpleHandlerTemplate, map[string]interface{}{
+	return utils.WriteFile(filename, templates.ServiceTemplate, map[string]interface{}{
 		"ProjectName": moduleName,
 		"ModelName":   name,
 		"PackageName": strings.ToLower(name),
 		"VarName":     strings.ToLower(name),
 		"Fields":      parsedFields,
+	})
+}
+
+// GenerateSimpleService generates a simplified service implementation for rapid prototyping
+// Creates a basic service with string-based methods for quick testing without database dependencies
+// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+func GenerateSimpleService(name string) error {
+	filename := fmt.Sprintf("service/%s_service.go", strings.ToLower(name))
+
+	// Get module name from go.mod
+	moduleName, err := utils.GetModuleName()
+	if err != nil {
+		return fmt.Errorf("failed to get module name: %w", err)
+	}
+
+	return utils.WriteFile(filename, templates.SimpleServiceTemplate, map[string]interface{}{
+		"ProjectName": moduleName,
+		"ModelName":   name,
+		"PackageName": strings.ToLower(name),
+		"VarName":     strings.ToLower(name),
 	})
 }

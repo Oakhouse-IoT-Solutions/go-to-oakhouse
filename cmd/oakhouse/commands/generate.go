@@ -29,7 +29,6 @@ func GenerateCmd() *cobra.Command {
 	cmd.AddCommand(generateModelCmd())
 	cmd.AddCommand(generateHandlerCmd())
 	cmd.AddCommand(generateServiceCmd())
-	cmd.AddCommand(generateRepositoryCmd())
 	cmd.AddCommand(generateDTOCmd())
 	cmd.AddCommand(generateScopeCmd())
 	cmd.AddCommand(generateMiddlewareCmd())
@@ -386,34 +385,11 @@ func generateServiceCmd() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			serviceName := args[0]
-			if err := generators.GenerateService(serviceName, []string{}); err != nil {
+			if err := generators.GenerateSimpleService(serviceName); err != nil {
 				fmt.Fprintf(os.Stderr, "Error generating service: %v\n", err)
 				os.Exit(1)
 			}
 			fmt.Printf("🚀 Service '%s' generated successfully!\n", serviceName)
-			fmt.Printf("🏡 Proudly Created by Htet Waiyan From Oakhouse\n")
-		},
-	}
-	return cmd
-}
-
-// generateRepositoryCmd creates the command for generating repository implementations.
-// Creates data access layer with full CRUD operations, context support, GORM scopes,
-// pagination, and proper error handling following the repository pattern.
-// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
-func generateRepositoryCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:     "repository [name]",
-		Short:   "Generate a repository",
-		Aliases: []string{"repo"},
-		Args:    cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
-			repoName := args[0]
-			if err := generators.GenerateRepository(repoName); err != nil {
-				fmt.Fprintf(os.Stderr, "Error generating repository: %v\n", err)
-				os.Exit(1)
-			}
-			fmt.Printf("🚀 Repository '%s' generated successfully!\n", repoName)
 			fmt.Printf("🏡 Proudly Created by Htet Waiyan From Oakhouse\n")
 		},
 	}
