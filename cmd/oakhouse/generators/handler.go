@@ -19,8 +19,24 @@ func GenerateHandler(name string) error {
 	if err != nil {
 		return fmt.Errorf("failed to get module name: %w", err)
 	}
-	
+
 	return utils.WriteFile(filename, templates.HandlerTemplate, map[string]interface{}{
+		"ProjectName": moduleName,
+		"ModelName":   name,
+		"PackageName": strings.ToLower(name),
+		"VarName":     strings.ToLower(name),
+	})
+}
+
+func GenerateSimpleHandler(name string) error {
+	filename := fmt.Sprintf("handler/%s_handler.go", strings.ToLower(name))
+	// Get module name from go.mod
+	moduleName, err := utils.GetModuleName()
+	if err != nil {
+		return fmt.Errorf("failed to get module name: %w", err)
+	}
+
+	return utils.WriteFile(filename, templates.SimpleHandlerTemplate, map[string]interface{}{
 		"ProjectName": moduleName,
 		"ModelName":   name,
 		"PackageName": strings.ToLower(name),

@@ -45,13 +45,13 @@ func validateResourceName(name string) error {
 	if name == "" {
 		return fmt.Errorf("resource name cannot be empty")
 	}
-	
+
 	// Check if name starts with uppercase letter and contains only alphanumeric characters
 	matched, _ := regexp.MatchString(`^[A-Z][a-zA-Z0-9]*$`, name)
 	if !matched {
 		return fmt.Errorf("resource name must start with uppercase letter and contain only alphanumeric characters")
 	}
-	
+
 	// Check for reserved Go keywords
 	reservedWords := []string{"break", "case", "chan", "const", "continue", "default", "defer", "else", "fallthrough", "for", "func", "go", "goto", "if", "import", "interface", "map", "package", "range", "return", "select", "struct", "switch", "type", "var"}
 	for _, word := range reservedWords {
@@ -59,7 +59,7 @@ func validateResourceName(name string) error {
 			return fmt.Errorf("resource name cannot be a Go reserved keyword: %s", word)
 		}
 	}
-	
+
 	return nil
 }
 
@@ -72,38 +72,38 @@ func validateFields(fields []string) error {
 		"bool": true, "time.Time": true, "text": true,
 		"[]string": true, "[]int": true, "[]float64": true,
 	}
-	
+
 	for _, field := range fields {
 		parts := strings.Split(field, ":")
 		if len(parts) != 2 {
 			return fmt.Errorf("invalid field format '%s', expected 'name:type'", field)
 		}
-		
+
 		fieldName := strings.TrimSpace(parts[0])
 		fieldType := strings.TrimSpace(parts[1])
-		
+
 		if fieldName == "" {
 			return fmt.Errorf("field name cannot be empty in '%s'", field)
 		}
-		
+
 		// Check field name format
 		matched, _ := regexp.MatchString(`^[a-zA-Z][a-zA-Z0-9]*$`, fieldName)
 		if !matched {
 			return fmt.Errorf("field name '%s' must start with letter and contain only alphanumeric characters", fieldName)
 		}
-		
+
 		if !validTypes[fieldType] {
 			return fmt.Errorf("unsupported field type '%s' in field '%s'", fieldType, field)
 		}
 	}
-	
+
 	return nil
 }
 
 // runInteractiveMode prompts user for resource details
 func runInteractiveMode(resourceName string, fields []string) (string, []string, error) {
 	reader := bufio.NewReader(os.Stdin)
-	
+
 	// Get resource name if not provided
 	if resourceName == "" {
 		fmt.Print("Enter resource name (e.g., User, Product): ")
@@ -113,12 +113,12 @@ func runInteractiveMode(resourceName string, fields []string) (string, []string,
 		}
 		resourceName = strings.TrimSpace(input)
 	}
-	
+
 	fmt.Printf("\nConfiguring resource: %s\n", resourceName)
 	fmt.Println("Enter fields (format: name:type). Press Enter with empty line to finish.")
 	fmt.Println("Supported types: string, int, int32, int64, uint, uint32, uint64, float32, float64, float, bool, time.Time, text, []string, []int, []float64")
 	fmt.Println("")
-	
+
 	var interactiveFields []string
 	for {
 		fmt.Printf("Field %d: ", len(interactiveFields)+1)
@@ -126,39 +126,39 @@ func runInteractiveMode(resourceName string, fields []string) (string, []string,
 		if err != nil {
 			return "", nil, err
 		}
-		
+
 		field := strings.TrimSpace(input)
 		if field == "" {
 			break
 		}
-		
+
 		// Validate field format
 		if err := validateFields([]string{field}); err != nil {
 			fmt.Printf("❌ %v. Please try again.\n", err)
 			continue
 		}
-		
+
 		interactiveFields = append(interactiveFields, field)
 		fmt.Printf("✅ Added field: %s\n", field)
 	}
-	
+
 	// Combine existing fields with interactive fields
 	allFields := append(fields, interactiveFields...)
-	
+
 	fmt.Printf("\n📋 Resource Summary:\n")
 	fmt.Printf("   Name: %s\n", resourceName)
 	fmt.Printf("   Fields: %v\n", allFields)
 	fmt.Print("\nProceed with generation? (y/N): ")
-	
+
 	confirm, err := reader.ReadString('\n')
 	if err != nil {
 		return "", nil, err
 	}
-	
+
 	if strings.ToLower(strings.TrimSpace(confirm)) != "y" {
 		return "", nil, fmt.Errorf("generation cancelled by user")
 	}
-	
+
 	return resourceName, allFields, nil
 }
 
@@ -166,7 +166,7 @@ func runInteractiveMode(resourceName string, fields []string) (string, []string,
 func showDryRunPreview(resourceName string, fields []string) {
 	fmt.Printf("Resource: %s\n", resourceName)
 	fmt.Printf("Fields: %v\n\n", fields)
-	
+
 	fmt.Println("Files that would be generated:")
 	files := []string{
 		fmt.Sprintf("model/%s.go", strings.ToLower(resourceName)),
@@ -178,11 +178,11 @@ func showDryRunPreview(resourceName string, fields []string) {
 		fmt.Sprintf("adapter/dto/%s_dto.go", strings.ToLower(resourceName)),
 		fmt.Sprintf("adapter/route/%s_route.go", strings.ToLower(resourceName)),
 	}
-	
+
 	for i, file := range files {
 		fmt.Printf("   %d. %s\n", i+1, file)
 	}
-	
+
 	fmt.Printf("\nTotal: %d files\n", len(files))
 }
 
@@ -190,7 +190,7 @@ func showDryRunPreview(resourceName string, fields []string) {
 func checkForConflicts(resourceName string) []string {
 	var conflicts []string
 	lowerName := strings.ToLower(resourceName)
-	
+
 	filesToCheck := []string{
 		fmt.Sprintf("model/%s.go", lowerName),
 		fmt.Sprintf("adapter/repository/%s_repository.go", lowerName),
@@ -201,14 +201,14 @@ func checkForConflicts(resourceName string) []string {
 		fmt.Sprintf("adapter/dto/%s_dto.go", lowerName),
 		fmt.Sprintf("adapter/route/%s_route.go", lowerName),
 	}
-	
+
 	for _, file := range filesToCheck {
 		if _, err := os.Stat(file); err == nil {
 			absPath, _ := filepath.Abs(file)
 			conflicts = append(conflicts, absPath)
 		}
 	}
-	
+
 	return conflicts
 }
 
@@ -236,7 +236,7 @@ Examples:
   oakhouse generate resource Product title:string price:float description:text
   oakhouse generate resource --interactive
   oakhouse generate resource --dry-run User name:string`,
-		Args:  cobra.MinimumNArgs(1),
+		Args: cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			// Get flags
 			interactive, _ := cmd.Flags().GetBool("interactive")
@@ -356,9 +356,6 @@ func generateModelCmd() *cobra.Command {
 	return cmd
 }
 
-// generateHandlerCmd creates the command for generating HTTP handlers.
-// Creates REST API handlers with proper HTTP methods, request/response handling,
-// validation, error handling, and clean separation of concerns.
 // 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func generateHandlerCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -367,7 +364,7 @@ func generateHandlerCmd() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			handlerName := args[0]
-			if err := generators.GenerateHandler(handlerName); err != nil {
+			if err := generators.GenerateSimpleHandler(handlerName); err != nil {
 				fmt.Fprintf(os.Stderr, "Error generating handler: %v\n", err)
 				os.Exit(1)
 			}

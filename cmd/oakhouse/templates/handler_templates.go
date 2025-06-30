@@ -166,3 +166,24 @@ func (h *{{.VarName}}Handler) Delete(ctx *fiber.Ctx) error {
 	})
 }
 `
+
+// Simple handler template
+// Handler templates
+const SimpleHandlerTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package handler
+
+import (
+	"github.com/gofiber/fiber/v2"
+)
+
+type {{.ModelName}}Handler struct {
+}
+
+func New{{.ModelName}}Handler() *{{.ModelName}}Handler {
+	return &{{.ModelName}}Handler{}
+}
+
+func (h *{{.ModelName}}Handler) Index(c *fiber.Ctx) error {
+	return c.SendString("{{.ModelName}}s working")
+}
+`

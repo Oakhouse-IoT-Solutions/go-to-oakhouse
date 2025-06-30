@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.28.0] - 2024-07-27
+
+### Added
+
+- **Simple Service Template**: Added a simplified service template for rapid prototyping without database dependencies
+- **Generate Resource Enhancement**: Added `--simple` flag to `generate resource` command to create simplified resources without database dependencies
+- **Dry Run Preview**: Updated dry run preview to show different file lists based on simple/full mode
+
 ## [1.27.0] - 2024-07-26
 
 ### Added

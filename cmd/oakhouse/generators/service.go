@@ -11,13 +11,13 @@ import (
 // GenerateServiceInterface generates a service interface file
 func GenerateServiceInterface(name string) error {
 	filename := fmt.Sprintf("service/%s_interface.go", strings.ToLower(name))
-	
+
 	// Get module name from go.mod
 	moduleName, err := utils.GetModuleName()
 	if err != nil {
 		return fmt.Errorf("failed to get module name: %w", err)
 	}
-	
+
 	return utils.WriteFile(filename, templates.ServiceInterfaceTemplate, map[string]interface{}{
 		"ProjectName": moduleName,
 		"ModelName":   name,
@@ -32,17 +32,17 @@ func GenerateServiceInterface(name string) error {
 // 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func GenerateService(name string, fields []string) error {
 	filename := fmt.Sprintf("service/%s_service.go", strings.ToLower(name))
-	
+
 	// Parse fields for template
 	parsedFields := utils.ParseFields(fields)
-	
+
 	// Get module name from go.mod
 	moduleName, err := utils.GetModuleName()
 	if err != nil {
 		return fmt.Errorf("failed to get module name: %w", err)
 	}
-	
-	return utils.WriteFile(filename, templates.ServiceTemplate, map[string]interface{}{
+
+	return utils.WriteFile(filename, templates.SimpleHandlerTemplate, map[string]interface{}{
 		"ProjectName": moduleName,
 		"ModelName":   name,
 		"PackageName": strings.ToLower(name),

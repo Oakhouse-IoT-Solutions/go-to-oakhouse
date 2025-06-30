@@ -119,3 +119,19 @@ func (s *{{.VarName}}Service) buildScopes(getDto *dto.Get{{.ModelName}}Dto) []fu
 	return scopes
 }
 `
+
+// Simple service implementation template for rapid prototyping without database dependencies
+const SimpleServiceTemplate = `// 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
+package service
+
+// {{.VarName}}Service implements the {{.ModelName}}Service interface
+type {{.VarName}}Service struct {}
+
+func New{{.ModelName}}Service() {{.ModelName}}Service {
+	return &{{.VarName}}Service{}
+}
+
+func (s *{{.VarName}}Service) Index() string {
+	return c.SendString("{{.ModelName}}s working")
+}
+`

@@ -11,7 +11,7 @@ import (
 )
 
 // Version represents the current version of Go To Oakhouse
-const Version = "1.27.0"
+const Version = "1.28.0"
 
 // Field represents a struct field with metadata for code generation
 type Field struct {
