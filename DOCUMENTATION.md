@@ -102,10 +102,7 @@ go mod tidy
 
 # Set up environment
 cp .env.example .env
-# Edit .env with your database credentials
-
-# Integrate database support
-oakhouse integrate database
+# Edit .env with your configuration
 
 # Start development server
 oakhouse serve
@@ -971,8 +968,7 @@ oakhouse generate middleware RoleCheck
 ### Database Operations
 
 ```bash
-# Integrate database support to your project
-oakhouse integrate database
+# Configure your project as needed
 ```
 
 ## Configuration
