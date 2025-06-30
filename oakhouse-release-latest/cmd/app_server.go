@@ -12,15 +12,17 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"gorm.io/gorm"
-)
+
+	"oakhouse-release-latest/adapter")
 
 type AppServer struct {
-	app *fiber.App
-	cfg *config.Config
-	db  *gorm.DB
+	app          *fiber.App
+	cfg          *config.Config
+	db           *gorm.DB
+	redisAdapter *adapter.RedisAdapter
 }
 
-func NewAppServer(cfg *config.Config, db *gorm.DB) *AppServer {
+func NewAppServer(cfg *config.Config, db *gorm.DB, redisAdapter *adapter.RedisAdapter) *AppServer {
 	app := fiber.New(fiber.Config{
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			code := fiber.StatusInternalServerError
@@ -45,9 +47,10 @@ func NewAppServer(cfg *config.Config, db *gorm.DB) *AppServer {
 	app.Use(middleware.AuthMiddleware())
 
 	return &AppServer{
-		app: app,
-		cfg: cfg,
-		db:  db,
+		app:          app,
+		cfg:          cfg,
+		db:           db,
+		redisAdapter: redisAdapter,
 	}
 }
 

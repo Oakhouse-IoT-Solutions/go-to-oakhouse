@@ -4,15 +4,18 @@ package config
 import "os"
 
 type Config struct {
-	DBHost     string
-	DBPort     string
-	DBUser     string
-	DBPassword string
-	DBName     string
-	DBSSLMode  string
-	Port       string
-	Env        string
-	JWTSecret  string
+	DBHost        string
+	DBPort        string
+	DBUser        string
+	DBPassword    string
+	DBName        string
+	DBSSLMode     string
+	Port          string
+	Env           string
+	JWTSecret     string
+	RedisURL      string
+	RedisPassword string
+	RedisDB       string
 }
 
 func LoadConfig() *Config {
