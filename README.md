@@ -84,11 +84,8 @@ oakhouse generate service ProductService
 ### Start Development Server
 
 ```bash
-# Server starts without database by default
+# Server starts with postgres database by default
 oakhouse serve
-
-# Integrate database support when needed
-oakhouse integrate database
 ```
 
 ### Database Support
