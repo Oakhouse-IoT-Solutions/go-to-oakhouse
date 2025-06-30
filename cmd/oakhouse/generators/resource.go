@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// generateResource generates a complete REST resource including model, repository, service, handler, DTOs and routes.
+// generateResource generates a complete REST resource including model, service, handler, DTOs and routes.
 // This provides a full CRUD implementation following clean architecture principles with proper separation of concerns.
 // Returns a list of all created files for user feedback.
 // 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡

@@ -52,12 +52,12 @@ func BuildApplication() error {
 	return cmd.Run()
 }
 
-// addDatabase adds database configuration and connection to existing projects.
+// IntegrateDatabase adds database configuration and connection to existing projects.
 // Updates environment configuration and modifies app server to require database connection.
 // Transforms optional database setup into required database connection for production use.
 // 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
-func AddDatabase() error {
-	fmt.Println("📦 Adding database support...")
+func IntegrateDatabase() error {
+	fmt.Println("📦 Integrating database support...")
 
 	// Check if we're in a valid project directory
 	if _, err := os.Stat("go.mod"); os.IsNotExist(err) {
@@ -94,7 +94,7 @@ DB_SSL_MODE=disable
 
 		// Replace optional database logic with required database
 		updatedContent := strings.ReplaceAll(string(content),
-			"// Initialize database (optional - server can run without it)\n\tvar err error\n\ts.db, err = adapter.NewDatabaseAdapter(s.config)\n\tif err != nil {\n\t\tlog.Printf(\"⚠️  Database connection failed: %v\", err)\n\t\tlog.Println(\"💡 To connect to PostgreSQL, set these environment variables:\")\n\t\tlog.Println(\"   DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME\")\n\t\tlog.Println(\"   Or use: oakhouse add database\")\n\t\tlog.Println(\"🚀 Server will continue without database connection\")\n\t\ts.db = nil\n\t}",
+			"// Initialize database (optional - server can run without it)\n\tvar err error\n\ts.db, err = adapter.NewDatabaseAdapter(s.config)\n\tif err != nil {\n\t\tlog.Printf(\"⚠️  Database connection failed: %v\", err)\n\t\tlog.Println(\"💡 To connect to PostgreSQL, set these environment variables:\")\n\t\tlog.Println(\"   DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME\")\n\t\tlog.Println(\"   Or use: oakhouse integrate database\")\n\t\tlog.Println(\"🚀 Server will continue without database connection\")\n\t\ts.db = nil\n\t}",
 			"// Initialize database\n\tvar err error\n\ts.db, err = adapter.NewDatabaseAdapter(s.config)\n\tif err != nil {\n\t\tlog.Fatalf(\"Failed to connect to database: %v\", err)\n\t}")
 
 		if err := os.WriteFile(appServerPath, []byte(updatedContent), 0644); err != nil {

@@ -35,7 +35,7 @@ Features:
 	// Add subcommands from commands package
 	rootCmd.AddCommand(commands.NewCmd())
 	rootCmd.AddCommand(commands.GenerateCmd())
-	rootCmd.AddCommand(commands.AddCmd())
+	rootCmd.AddCommand(commands.IntegrateCmd())
 	rootCmd.AddCommand(commands.ServeCmd())
 	rootCmd.AddCommand(commands.BuildCmd())
 

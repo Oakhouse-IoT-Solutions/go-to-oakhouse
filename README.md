@@ -91,29 +91,29 @@ oakhouse generate service ProductService
 # Server starts without database by default
 oakhouse serve
 
-# Add database support when needed
-oakhouse add database
+# Integrate database support when needed
+oakhouse integrate database
 ```
 
 ### Database Support
 
-By default, new projects are generated **without database dependencies** and can run immediately. When you're ready to add database support:
+By default, new projects are generated **without database dependencies** and can run immediately. When you're ready to integrate database support:
 
 ```bash
-# Add database support to existing project
-oakhouse add database
+# Integrate database support to existing project
+oakhouse integrate database
 
 # Set up your database environment variables
 cp .env.example .env
 # Edit .env with your database credentials
 
 # Database connection is now handled automatically when you run:
-# oakhouse add database
+# oakhouse integrate database
 ```
 
 This approach allows you to:
 - ✅ Start developing immediately without PostgreSQL setup
-- ✅ Add database support only when needed
+- ✅ Integrate database support only when needed
 - ✅ Keep projects lightweight for simple APIs
 
 ## Project Structure
@@ -338,8 +338,8 @@ oakhouse generate middleware <name>
 ### Database Operations
 
 ```bash
-# Add database support to your project
-oakhouse add database
+# Integrate database support to your project
+oakhouse integrate database
 ```
 
 ## Testing

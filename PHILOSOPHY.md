@@ -80,7 +80,7 @@ oakhouse generate handler OrderHandler
 oakhouse generate service PaymentService
 
 # Database setup
-oakhouse add database
+oakhouse integrate database
 
 # Development server with hot reload
 oakhouse serve

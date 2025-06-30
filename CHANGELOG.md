@@ -256,7 +256,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed complex migration CLI commands (`migrate up`, `migrate create`, etc.)
 
 ### Changed
-- **Simplified database workflow**: Projects now use `oakhouse add database` for database setup
+- **Simplified database workflow**: Projects now use `oakhouse integrate database` for database setup
 - Updated all documentation to reflect new database management approach
 - Modified project templates to use simplified database setup
 

@@ -15,13 +15,13 @@ import (
 
 // GenerateCmd creates the 'generate' command group for code generation operations.
 // Provides subcommands for generating various components like resources, models,
-// handlers, services, repositories, DTOs, scopes, middleware, and routes.
+// handlers, services, DTOs, scopes, middleware, and routes.
 // 🚀 Proudly Created by Htet Waiyan From Oakhouse 🏡
 func GenerateCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "generate",
 		Short: "Generate code components",
-		Long:  `Generate various code components like models, handlers, services, repositories, DTOs, scopes, middleware, and routes.`,
+		Long:  `Generate various code components like models, handlers, services, DTOs, scopes, middleware, and routes.`,
 	}
 
 	// Add all generate subcommands
@@ -219,7 +219,7 @@ func checkForConflicts(resourceName string) []string {
 func generateResourceCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "resource [name] [fields...]",
-		Short: "Generate a complete CRUD resource (model, handler, service, repository, DTOs, routes)",
+		Short: "Generate a complete CRUD resource (model, handler, service, DTOs, routes)",
 		Long: `Generate a complete CRUD resource with all necessary components.
 
 This command creates:

@@ -104,8 +104,8 @@ go mod tidy
 cp .env.example .env
 # Edit .env with your database credentials
 
-# Add database support
-oakhouse add database
+# Integrate database support
+oakhouse integrate database
 
 # Start development server
 oakhouse serve
@@ -971,8 +971,8 @@ oakhouse generate middleware RoleCheck
 ### Database Operations
 
 ```bash
-# Add database support to your project
-oakhouse add database
+# Integrate database support to your project
+oakhouse integrate database
 ```
 
 ## Configuration
@@ -2097,8 +2097,8 @@ oakhouse generate resource Comment content:text post_id:uuid author_id:uuid
 # Post Post `gorm:"foreignKey:PostID"`
 # Author User `gorm:"foreignKey:AuthorID"`
 
-# Add database support
-oakhouse add database
+# Integrate database support
+oakhouse integrate database
 
 # Start development server
 oakhouse serve
