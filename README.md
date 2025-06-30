@@ -2,10 +2,6 @@
 
 ## Welcome to Go To Oakhouse
 
-<p align="center">
-  <img src="https://upload.wikimedia.org/wikipedia/en/4/42/Richard_Feynman_Nobel.jpg" alt="Richard Feynman" width="200">
-</p>
-
 **Richard Feynman** 🏆, a Nobel Prize–winning physicist, was known not just for his genius—but for how clearly he explained complex ideas.
 He believed that if you can't explain something simply, you don't really understand it.
 His method, the **Feynman Technique** 🎯, was all about breaking things down, identifying gaps, and refining your explanation until it truly made sense.
@@ -97,24 +93,7 @@ oakhouse integrate database
 
 ### Database Support
 
-By default, new projects are generated **without database dependencies** and can run immediately. When you're ready to integrate database support:
-
-```bash
-# Integrate database support to existing project
-oakhouse integrate database
-
-# Set up your database environment variables
-cp .env.example .env
-# Edit .env with your database credentials
-
-# Database connection is now handled automatically when you run:
-# oakhouse integrate database
-```
-
-This approach allows you to:
-- ✅ Start developing immediately without PostgreSQL setup
-- ✅ Integrate database support only when needed
-- ✅ Keep projects lightweight for simple APIs
+By default, new projects are generated **with postgres database support**.
 
 ## Project Structure
 
@@ -204,38 +183,6 @@ func (h *userHandler) Create(ctx *fiber.Ctx) error {
     }
     
     return ctx.Status(201).JSON(presenter.SuccessResponse("User created", user))
-}
-```
-
-### Simplified Handlers (New in v1.4.0)
-
-For rapid prototyping and testing, Go To Oakhouse now generates simplified handlers that return plain text responses without requiring database setup:
-
-```go
-type BookHandler struct{}
-
-func NewBookHandler() *BookHandler {
-	return &BookHandler{}
-}
-
-func (h *BookHandler) FindAll(c *fiber.Ctx) error {
-	return c.SendString("Book FindAll method called")
-}
-
-func (h *BookHandler) FindByID(c *fiber.Ctx) error {
-	return c.SendString("Book FindByID method called")
-}
-
-func (h *BookHandler) Create(c *fiber.Ctx) error {
-	return c.SendString("Book Create method called")
-}
-
-func (h *BookHandler) Update(c *fiber.Ctx) error {
-	return c.SendString("Book Update method called")
-}
-
-func (h *BookHandler) Delete(c *fiber.Ctx) error {
-	return c.SendString("Book Delete method called")
 }
 ```
 
