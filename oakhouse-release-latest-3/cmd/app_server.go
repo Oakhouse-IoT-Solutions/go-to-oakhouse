@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"log"
 
+	"oakhouse-release-latest-3/adapter"
 	"oakhouse-release-latest-3/config"
-	"oakhouse-release-latest-3/route"
 	"oakhouse-release-latest-3/middleware"
+	"oakhouse-release-latest-3/route"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -55,7 +57,7 @@ func NewAppServer(cfg *config.Config, db *gorm.DB, redisAdapter *adapter.RedisAd
 
 func (s *AppServer) Start() error {
 	// Setup routes
-	route.SetupRoutes(s.app, s.db)
+	route.SetupRoutes(s.app, s.db, s.redisAdapter)
 
 	// Start server
 	port := s.cfg.Port
