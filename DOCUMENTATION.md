@@ -68,7 +68,7 @@ Simple. Curious. Honest. ✨
 - PostgreSQL (recommended) or MySQL
 - Redis (optional, for caching)
 
-### What's New in v1.27.0
+### What's New in v1.28.0
 
 - **Scope Generation Enhancement**: Fixed duplicate import issues in scope generation system
 - **Template System Improvement**: Added function-only templates for appending to existing files
@@ -79,7 +79,7 @@ Simple. Curious. Honest. ✨
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.27.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.28.0
 ```
 
 ### Verify Installation

@@ -48,7 +48,7 @@ A powerful Go framework, designed for rapid API development with clean architect
 - 🐳 **Docker Ready** - Production-ready containerization
 - 📚 **Comprehensive Documentation** - Detailed guides and examples
 
-## What's New in v1.27.0
+## What's New in v1.28.0
 
 - 🔧 **Scope Generation Enhancement** - Fixed duplicate import issues in scope generation system
 - 📝 **Template System Improvement** - Added function-only templates for appending to existing files
@@ -59,7 +59,7 @@ A powerful Go framework, designed for rapid API development with clean architect
 ### Installation
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.27.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.28.0
 ```
 
 ### Create New Project
