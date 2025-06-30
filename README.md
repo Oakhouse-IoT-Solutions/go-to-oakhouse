@@ -83,7 +83,6 @@ oakhouse generate resource User name:string email:string age:int
 oakhouse generate model Product
 oakhouse generate handler ProductHandler
 oakhouse generate service ProductService
-oakhouse generate repository ProductRepository
 ```
 
 ### Start Development Server
@@ -331,7 +330,6 @@ oakhouse generate resource <name> [fields...]
 oakhouse generate model <name>
 oakhouse generate handler <name>
 oakhouse generate service <name>
-oakhouse generate repository <name>
 oakhouse generate dto <name>
 oakhouse generate scope <name>
 oakhouse generate middleware <name>

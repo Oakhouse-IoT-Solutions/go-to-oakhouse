@@ -961,7 +961,6 @@ oakhouse generate resource User name:string email:string age:int
 
 # Generate individual components
 oakhouse generate model Product
-oakhouse generate repository ProductRepository
 oakhouse generate service ProductService
 oakhouse generate handler ProductHandler
 oakhouse generate dto product CreateProductDto
