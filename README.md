@@ -260,7 +260,7 @@ func (r *userRepository) FindAll(ctx context.Context, filter *dto.GetUserDto) ([
 # Create new project
 oakhouse new <project-name>
 
-# Start development server with hot reload
+# Start development server 
 oakhouse serve --port 8080
 
 # Build for production
@@ -280,26 +280,6 @@ oakhouse generate service <name>
 oakhouse generate dto <name>
 oakhouse generate scope <name>
 oakhouse generate middleware <name>
-```
-
-### Database Operations
-
-```bash
-# Integrate database support to your project
-oakhouse integrate database
-```
-
-## Testing
-
-```bash
-# Run all tests
-go test ./...
-
-# Run tests with coverage
-go test -cover ./...
-
-# Run specific test
-go test ./handler -v
 ```
 
 ## Deployment
