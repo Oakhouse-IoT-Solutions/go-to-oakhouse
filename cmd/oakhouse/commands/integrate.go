@@ -358,7 +358,7 @@ func updateMainGoForRedis() error {
 	if cfg.RedisURL != "" {
 		redisAdapter, err = adapter.NewRedisAdapter(cfg)
 		if err != nil {
-			log.Printf("Warning: Failed to initialize Redis: %v", err)
+			log.Fatal("Failed to initialize Redis", err)
 		} else {
 			log.Println("Redis connected successfully")
 		}
