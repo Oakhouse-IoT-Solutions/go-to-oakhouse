@@ -1,4 +1,6 @@
 # 🏠  The Oakhouse Way to Build Faster with Go
+![The Oakhouse Way](assets/the_oakhouse_way.png)
+
 
 ## Welcome to Go To Oakhouse
 
