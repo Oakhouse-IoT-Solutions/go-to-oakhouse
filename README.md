@@ -49,7 +49,7 @@ A powerful Go framework, designed for rapid API development with clean architect
 - 🐳 **Docker Ready** - Production-ready containerization
 - 📚 **Comprehensive Documentation** - Detailed guides and examples
 
-## What's New in v1.29.0
+## What's New in v1.30.0
 
 - 🔴 **Redis Integration** - Comprehensive Redis caching support with intelligent cache management
 - ⚡ **Performance Optimization** - Built-in caching strategies for FindAll and FindById operations
@@ -62,7 +62,7 @@ A powerful Go framework, designed for rapid API development with clean architect
 ### Installation
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.29.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.30.0
 ```
 
 ### Create New Project

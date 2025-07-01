@@ -69,7 +69,7 @@ Simple. Curious. Honest. ✨
 - PostgreSQL (recommended) or MySQL
 - Redis (optional, for caching)
 
-### What's New in v1.29.0
+### What's New in v1.30.0
 
 - **Redis Integration**: Comprehensive Redis caching support with RedisAdapter
 - **Cache Management**: Intelligent caching strategies for service layers
@@ -82,7 +82,7 @@ Simple. Curious. Honest. ✨
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.29.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.30.0
 ```
 
 ### Verify Installation
