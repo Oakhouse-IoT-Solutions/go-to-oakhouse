@@ -69,18 +69,20 @@ Simple. Curious. Honest. ✨
 - PostgreSQL (recommended) or MySQL
 - Redis (optional, for caching)
 
-### What's New in v1.28.0
+### What's New in v1.29.0
 
-- **Scope Generation Enhancement**: Fixed duplicate import issues in scope generation system
-- **Template System Improvement**: Added function-only templates for appending to existing files
-- **Code Quality**: Enhanced maintainability and consistency across generated code
-- **Duplicate Imports Fix**: Eliminated duplicate package declarations and import statements in generated filter files
-- **Template Consistency**: Ensured all date range functions use time.Time values consistently
+- **Redis Integration**: Comprehensive Redis caching support with RedisAdapter
+- **Cache Management**: Intelligent caching strategies for service layers
+- **Performance Optimization**: Built-in caching for FindAll and FindById operations with configurable TTL
+- **Cache Invalidation**: Automatic cache invalidation for Create, Update, and Delete operations
+- **Redis Configuration**: Easy Redis setup with environment variables (REDIS_URL, REDIS_PASSWORD, REDIS_DB)
+- **Enhanced Documentation**: Complete Redis integration guides with real-world examples
+- **Wire Integration**: Seamless Redis adapter integration with dependency injection
 
 ### Install CLI Tool
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.28.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.29.0
 ```
 
 ### Verify Installation

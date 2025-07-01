@@ -313,7 +313,7 @@ Ready to experience the future of Go web development?
 
 ```bash
 # Install the CLI
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.28.0
+go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.29.0
 
 # Create your first project
 oakhouse new my-awesome-api

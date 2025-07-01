@@ -391,4 +391,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [1.26.0]: https://github.com/oakhouse-ai/go-to-oakhouse/compare/v1.25.0...v1.26.0
 [1.27.0]: https://github.com/oakhouse-ai/go-to-oakhouse/compare/v1.26.0...v1.27.0
+[1.29.0]: https://github.com/oakhouse-ai/go-to-oakhouse/compare/v1.28.0...v1.29.0
 [1.28.0]: https://github.com/oakhouse-ai/go-to-oakhouse/compare/v1.27.0...v1.28.0
