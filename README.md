@@ -43,6 +43,7 @@ A powerful Go framework, designed for rapid API development with clean architect
 - 🔧 **Code Generation** - Generate models, handlers, services, repositories
 - 🌐 **Fiber Framework** - Built on top of Go Fiber for high performance
 - 🗄️ **GORM Integration** - Advanced ORM with scoping support
+- 🔴 **Redis Integration** - Built-in Redis caching with intelligent cache management
 - ✅ **Auto Validation** - Request validation with struct tags
 - 🎯 **Simplified Handlers** - Generate lightweight handlers with text responses for rapid prototyping
 - 🐳 **Docker Ready** - Production-ready containerization

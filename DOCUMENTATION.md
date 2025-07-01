@@ -49,15 +49,16 @@ Simple. Curious. Honest. ✨
 7. [Models and Entities](#models-and-entities)
 8. [Repositories](#repositories)
 9. [Services](#services)
-10. [Handlers](#handlers)
-11. [DTOs (Data Transfer Objects)](#dtos-data-transfer-objects)
-12. [Scopes](#scopes)
-13. [Middleware](#middleware)
-14. [Database Operations](#database-operations)
-15. [Authentication](#authentication)
-16. [Testing](#testing)
-17. [Deployment](#deployment)
-18. [Best Practices](#best-practices)
+10. [Redis Integration](#redis-integration)
+11. [Handlers](#handlers)
+12. [DTOs (Data Transfer Objects)](#dtos-data-transfer-objects)
+13. [Scopes](#scopes)
+14. [Middleware](#middleware)
+15. [Database Operations](#database-operations)
+16. [Authentication](#authentication)
+17. [Testing](#testing)
+18. [Deployment](#deployment)
+19. [Best Practices](#best-practices)
 19. [Examples](#examples)
 
 ## Installation
@@ -1221,6 +1222,233 @@ func (s *userService) AuthenticateUser(ctx context.Context, email, password stri
     }
     
     return user, nil
+}
+```
+
+## Redis Integration
+
+### Overview
+
+Oakhouse provides built-in Redis integration for high-performance caching. The Redis adapter offers intelligent caching strategies that can significantly improve your application's performance by reducing database queries.
+
+### Configuration
+
+Redis configuration is handled through environment variables:
+
+```bash
+REDIS_URL=redis://localhost:6379
+REDIS_PASSWORD=your_redis_password
+REDIS_DB=0
+```
+
+### Redis Adapter
+
+The Redis adapter provides a clean interface for cache operations:
+
+```go
+// adapter/redis_adapter.go
+package adapter
+
+import (
+    "context"
+    "encoding/json"
+    "time"
+    "github.com/redis/go-redis/v9"
+)
+
+type RedisAdapter struct {
+    client *redis.Client
+}
+
+func NewRedisAdapter(redisURL, password string, db int) *RedisAdapter {
+    rdb := redis.NewClient(&redis.Options{
+        Addr:     redisURL,
+        Password: password,
+        DB:       db,
+    })
+    
+    return &RedisAdapter{
+        client: rdb,
+    }
+}
+
+func (r *RedisAdapter) Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
+    return r.client.Set(ctx, key, value, expiration).Err()
+}
+
+func (r *RedisAdapter) Get(ctx context.Context, key string) (string, error) {
+    return r.client.Get(ctx, key).Result()
+}
+
+func (r *RedisAdapter) SetJSON(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
+    jsonData, err := json.Marshal(value)
+    if err != nil {
+        return err
+    }
+    return r.client.Set(ctx, key, jsonData, expiration).Err()
+}
+
+func (r *RedisAdapter) GetJSON(ctx context.Context, key string, dest interface{}) error {
+    val, err := r.client.Get(ctx, key).Result()
+    if err != nil {
+        return err
+    }
+    return json.Unmarshal([]byte(val), dest)
+}
+```
+
+### Service Integration
+
+Integrate Redis caching into your services for optimal performance:
+
+```go
+// service/user_service.go
+type userService struct {
+    repo         repository.UserRepository
+    redisAdapter *adapter.RedisAdapter
+}
+
+func NewUserService(repo repository.UserRepository, redisAdapter *adapter.RedisAdapter) UserService {
+    return &userService{
+        repo:         repo,
+        redisAdapter: redisAdapter,
+    }
+}
+
+func (s *userService) GetUserByID(ctx context.Context, id uuid.UUID) (*entity.User, error) {
+    // Try to get from cache first
+    cacheKey := fmt.Sprintf("user:%s", id.String())
+    var cachedUser entity.User
+    
+    if err := s.redisAdapter.GetJSON(ctx, cacheKey, &cachedUser); err == nil {
+        return &cachedUser, nil
+    }
+    
+    // If not in cache, get from database
+    user, err := s.repo.FindByID(ctx, id)
+    if err != nil {
+        return nil, err
+    }
+    
+    // Cache the result for 10 minutes
+    s.redisAdapter.SetJSON(ctx, cacheKey, user, 10*time.Minute)
+    
+    return user, nil
+}
+
+func (s *userService) UpdateUser(ctx context.Context, id uuid.UUID, dto *user.UpdateUserDto) (*entity.User, error) {
+    user, err := s.repo.Update(ctx, id, dto)
+    if err != nil {
+        return nil, err
+    }
+    
+    // Invalidate cache after update
+    cacheKey := fmt.Sprintf("user:%s", id.String())
+    s.redisAdapter.Delete(ctx, cacheKey)
+    
+    return user, nil
+}
+```
+
+### Cache Strategies
+
+#### 1. Read-Through Caching
+Data is loaded into cache on demand when requested:
+
+```go
+func (s *service) FindAll(ctx context.Context, dto *GetDto) ([]Entity, int64, error) {
+    cacheKey := s.generateCacheKey("list", dto.Page, dto.Limit, dto.Search)
+    
+    var result struct {
+        Data  []Entity `json:"data"`
+        Total int64    `json:"total"`
+    }
+    
+    if err := s.redisAdapter.GetJSON(ctx, cacheKey, &result); err == nil {
+        return result.Data, result.Total, nil
+    }
+    
+    data, total, err := s.repo.FindAll(ctx, dto)
+    if err != nil {
+        return nil, 0, err
+    }
+    
+    result.Data = data
+    result.Total = total
+    s.redisAdapter.SetJSON(ctx, cacheKey, result, 5*time.Minute)
+    
+    return data, total, nil
+}
+```
+
+#### 2. Write-Through Caching
+Data is written to both cache and database simultaneously:
+
+```go
+func (s *service) Create(ctx context.Context, dto *CreateDto) (*Entity, error) {
+    entity, err := s.repo.Create(ctx, dto)
+    if err != nil {
+        return nil, err
+    }
+    
+    // Cache the new entity
+    cacheKey := fmt.Sprintf("entity:%s", entity.ID.String())
+    s.redisAdapter.SetJSON(ctx, cacheKey, entity, 10*time.Minute)
+    
+    // Invalidate list caches
+    s.invalidateListCache(ctx)
+    
+    return entity, nil
+}
+```
+
+#### 3. Cache Invalidation
+Remove stale data from cache when updates occur:
+
+```go
+func (s *service) invalidateEntityCache(ctx context.Context, id uuid.UUID) {
+    cacheKey := fmt.Sprintf("entity:%s", id.String())
+    s.redisAdapter.Delete(ctx, cacheKey)
+}
+
+func (s *service) invalidateListCache(ctx context.Context) {
+    pattern := "entity:list:*"
+    s.redisAdapter.DeletePattern(ctx, pattern)
+}
+```
+
+### Best Practices
+
+1. **Cache Key Naming**: Use consistent, hierarchical naming conventions
+2. **Expiration Times**: Set appropriate TTL based on data volatility
+3. **Cache Invalidation**: Always invalidate related caches on updates
+4. **Error Handling**: Gracefully handle cache misses and Redis failures
+5. **Memory Management**: Monitor Redis memory usage and implement eviction policies
+
+### Integration with Wire
+
+Wire dependency injection seamlessly integrates Redis:
+
+```go
+// wire.go
+func InitializeApp() (*fiber.App, error) {
+    wire.Build(
+        // Redis
+        adapter.NewRedisAdapter,
+        
+        // Repositories
+        repository.NewUserRepository,
+        
+        // Services with Redis
+        service.NewUserService,
+        
+        // Handlers
+        handler.NewUserHandler,
+        
+        // App
+        NewApp,
+    )
+    return nil, nil
 }
 ```
 
