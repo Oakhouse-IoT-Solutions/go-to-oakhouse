@@ -160,6 +160,11 @@ REDIS_URL=redis://localhost:6379
 
 ### Handler Example
 
+```bash
+# Generate a handler
+oakhouse generate handler UserHandler
+```
+
 ```go
 type UserHandler interface {
     Create(ctx *fiber.Ctx) error
@@ -195,6 +200,11 @@ These simplified handlers allow you to:
 - ✅ Gradually add full implementation later
 
 ### Service Example
+
+```bash
+# Generate a service
+oakhouse generate handler UserService
+```
 
 ```go
 type UserService interface {
