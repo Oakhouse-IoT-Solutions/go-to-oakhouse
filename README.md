@@ -161,8 +161,10 @@ REDIS_URL=redis://localhost:6379
 ### Handler Example
 
 ```bash
+
 # Generate a handler
 oakhouse generate handler UserHandler
+
 ```
 
 ```go
@@ -202,8 +204,10 @@ These simplified handlers allow you to:
 ### Service Example
 
 ```bash
+
 # Generate a service
 oakhouse generate handler UserService
+
 ```
 
 ```go
