@@ -541,7 +541,7 @@ const IndexHtmlTemplate = `<!DOCTYPE html>
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #1976D2 0%, #26A69A 100%);
             min-height: 100vh;
         }
         
