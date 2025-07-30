@@ -29,9 +29,7 @@ More than that,
 **Oakhouse** helps you conquer complexity. ⚔️
 Just like **Julius Caesar** said:
 *"I came, I saw, I conquered."* 🏛️
-Here, you'll come, you'll learn, and you'll conquer Go. 🎯
-Like **Laravel** for PHP or **Rails** for Ruby,
-**Oakhouse** is that—but for Go.
+Here, you'll come, you'll learn, and you'll conquer Go. 🎯.
 Simple. Curious. Honest. ✨
 
 ---
