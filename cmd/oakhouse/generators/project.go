@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/templates"
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/utils"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/templates"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/utils"
 )
 
 // createNewProject creates a new Go To Oakhouse project with complete directory structure,

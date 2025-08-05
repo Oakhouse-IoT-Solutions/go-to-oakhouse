@@ -702,9 +702,9 @@ const IndexHtmlTemplate = `<!DOCTYPE html>
         <div class="cta-section">
             <h2 style="color: white; margin-bottom: 1rem;">Get Started Now</h2>
             <div class="code-block">
-                go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@{{.Version}}
+                go install github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse@{{.Version}}
             </div>
-            <a href="https://github.com/Oakhouse-Technology/go-to-oakhouse" class="cta-button">View on GitHub</a>
+            <a href="https://github.com/Oakhouse-IoT-Solutions/go-to-oakhouse" class="cta-button">View on GitHub</a>
         </div>
         
         <div class="author-section">

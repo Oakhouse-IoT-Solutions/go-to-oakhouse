@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/templates"
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/utils"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/templates"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/utils"
 )
 
 // generateDTO generates Data Transfer Objects for Create, Update, and Get operations.
@@ -21,7 +21,7 @@ func GenerateDTO(name string, fields []string) error {
 
 	// Parse fields for template
 	parsedFields := utils.ParseFields(fields)
-	
+
 	// Get module name from go.mod
 	moduleName, err := utils.GetModuleName()
 	if err != nil {

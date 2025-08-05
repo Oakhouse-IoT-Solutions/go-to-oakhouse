@@ -7,8 +7,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/templates"
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/utils"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/templates"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/utils"
 )
 
 // generateScope generates GORM scopes for advanced query filtering and reusable query logic.

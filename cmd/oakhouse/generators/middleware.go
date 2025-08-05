@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/templates"
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/utils"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/templates"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/utils"
 )
 
 // generateMiddleware generates HTTP middleware for cross-cutting concerns like authentication, logging, and validation.

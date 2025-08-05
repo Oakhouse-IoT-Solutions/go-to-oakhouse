@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/templates"
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/utils"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/templates"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/utils"
 )
 
 // generateModel generates a GORM model with UUID primary key, timestamps, and soft delete support.

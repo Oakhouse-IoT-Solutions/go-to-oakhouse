@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/generators"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/generators"
 	"github.com/spf13/cobra"
 )
 

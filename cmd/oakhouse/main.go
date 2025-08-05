@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/commands"
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/utils"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/commands"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/utils"
 	"github.com/spf13/cobra"
 )
 

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/templates"
-	"github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse/utils"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/templates"
+	"github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse/utils"
 )
 
 // generateRepository generates a repository implementation with full CRUD operations.
@@ -19,7 +19,7 @@ func GenerateRepository(name string) error {
 	if err != nil {
 		return fmt.Errorf("failed to get module name: %w", err)
 	}
-	
+
 	return utils.WriteFile(filename, templates.RepositoryInterfaceTemplate+"\n\n"+templates.RepositoryImplTemplate, map[string]interface{}{
 		"ProjectName": moduleName,
 		"ModelName":   name,

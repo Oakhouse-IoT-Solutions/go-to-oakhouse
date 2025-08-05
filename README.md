@@ -49,7 +49,7 @@ A powerful Go framework, designed for rapid API development with clean architect
 - 🐳 **Docker Ready** - Production-ready containerization
 - 📚 **Comprehensive Documentation** - Detailed guides and examples
 
-## What's New in v1.32.0
+## What's New in v1.34.0
 
 - 🔄 **Version Updates** - Updated version information across the codebase
 - 📚 **Documentation** - Enhanced documentation and installation commands
@@ -59,7 +59,26 @@ A powerful Go framework, designed for rapid API development with clean architect
 ### Installation
 
 ```bash
-go install github.com/Oakhouse-Technology/go-to-oakhouse/cmd/oakhouse@v1.32.0
+# Install the CLI
+go install github.com/Oakhouse-IoT-Solutions/go-to-oakhouse/cmd/oakhouse@v1.34.0
+
+# Add Go bin directory to PATH
+
+# For Linux/macOS (bash):
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
+source ~/.bashrc
+
+# For Linux/macOS (zsh):
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
+source ~/.zshrc
+
+# For Windows (PowerShell):
+# Add this to your PowerShell profile
+$env:Path += ";$(go env GOPATH)\bin"
+
+# For Windows (Command Prompt):
+# Add %GOPATH%\bin to your PATH environment variable
+# You can do this through System Properties > Environment Variables
 ```
 
 ### Create New Project
